@@ -3,153 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>饗宴指令 - 旗艦矩陣系統</title>
+    <title>饗宴指令 - 終極全領域版</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
         :root {
             --neon-gold: #d4af37;
-            --cyber-black: #050505;
-            --card-bg: #121212;
-            --accent-red: #ff4d4d;
-            --accent-blue: #00a8ff;
-            --accent-green: #00d2d3;
+            --cyber-black: #080808;
+            --card-bg: #151515;
+            --btn-grad: linear-gradient(135deg, #d4af37 0%, #f2d06b 100%);
         }
 
         body {
-            margin: 0; background: var(--cyber-black); color: #e0e0e0;
+            margin: 0; background: var(--cyber-black); color: #f0f0f0;
             font-family: 'Noto Sans TC', sans-serif;
             display: flex; flex-direction: column; align-items: center;
-            min-height: 100vh; overflow-x: hidden;
+            min-height: 100vh;
         }
 
         header { margin: 25px 0; text-align: center; border-bottom: 1px solid #222; width: 100%; padding-bottom: 15px; }
         header h1 { font-size: 1.4rem; font-weight: 900; letter-spacing: 12px; color: var(--neon-gold); margin: 0; }
-        header p { font-size: 0.7rem; color: #666; letter-spacing: 4px; margin-top: 5px; }
+        header p { font-size: 0.65rem; color: #555; letter-spacing: 3px; margin-top: 5px; }
 
-        /* 核心滾動螢幕 */
+        /* 核心滾動面板 */
         .slot-display {
-            width: 90%; max-width: 420px; height: 140px; 
-            background: linear-gradient(180deg, #000 0%, #111 50%, #000 100%);
-            border: 3px solid var(--neon-gold); border-radius: 15px;
+            width: 92%; max-width: 450px; height: 130px; 
+            background: #000; border: 2px solid var(--neon-gold); border-radius: 12px;
             display: flex; justify-content: center; align-items: center;
-            margin-bottom: 30px; position: sticky; top: 15px; z-index: 100;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.8), 0 0 15px rgba(212,175,55,0.2);
+            margin-bottom: 25px; position: sticky; top: 15px; z-index: 100;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 15px rgba(212,175,55,0.2);
         }
         #rolling-text {
             font-family: 'Share Tech Mono', monospace;
-            font-size: 2.2rem; font-weight: bold; color: var(--neon-gold);
-            text-shadow: 0 0 20px rgba(212,175,55,0.6);
-            text-align: center; padding: 0 10px;
+            font-size: 2.1rem; font-weight: bold; color: var(--neon-gold);
+            text-shadow: 0 0 15px var(--neon-gold); text-align: center;
+            padding: 0 10px;
         }
 
-        /* 分類網格：食慾增強設計 */
+        /* 網格系統 */
         .manual-grid {
-            display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;
-            width: 94%; max-width: 500px; padding-bottom: 130px;
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
+            width: 94%; max-width: 500px; padding-bottom: 140px;
         }
         .cat-card {
-            background: var(--card-bg); border: 1px solid #222; border-radius: 12px;
-            padding: 20px 10px; text-align: center; cursor: pointer;
-            transition: all 0.2s ease; position: relative; overflow: hidden;
+            background: var(--card-bg); border-radius: 15px; padding: 18px 8px;
+            text-align: center; cursor: pointer; transition: 0.2s;
+            border: 1px solid #222; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
-        .cat-card:active { transform: scale(0.95); background: #1a1a1a; }
-        .cat-emoji { font-size: 2.5rem; display: block; margin-bottom: 10px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5)); }
-        .cat-title { font-weight: 900; font-size: 1rem; color: #fff; letter-spacing: 1px; }
-        .cat-subtitle { font-size: 0.65rem; color: #666; margin-top: 4px; }
+        .cat-card:active { transform: scale(0.96); background: #222; }
+        .cat-emoji { font-size: 2.2rem; display: block; margin-bottom: 6px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
+        .cat-title { font-weight: 900; font-size: 0.95rem; color: #fff; }
+        .cat-info { font-size: 0.55rem; color: #666; margin-top: 5px; letter-spacing: 1px; }
 
-        /* 分類邊框色帶 */
-        .c-tw { border-top: 4px solid #f39c12; } /* 台式 */
-        .c-jp { border-top: 4px solid #3498db; } /* 日式 */
-        .c-ff { border-top: 4px solid #e74c3c; } /* 快餐 */
-        .c-kr { border-top: 4px solid #9b59b6; } /* 韓式 */
-        .c-th { border-top: 4px solid #2ecc71; } /* 泰式 */
-        .c-we { border-top: 4px solid #e67e22; } /* 美義 */
-        .c-hk { border-top: 4px solid #1abc9c; } /* 港式 */
-        .c-ds { border-top: 4px solid #fd79a8; } /* 甜點 */
+        /* 食慾色彩邊框 */
+        .t-stir { border-bottom: 4px solid #ff7f50; } /* 快炒 - 橘紅 */
+        .t-street { border-bottom: 4px solid #ffd700; } /* 小吃 - 金黃 */
+        .t-hk { border-bottom: 4px solid #00ced1; } /* 港式 - 湖水藍 */
+        .t-fast { border-bottom: 4px solid #ff4500; } /* 快餐 - 亮紅 */
+        .t-jp { border-bottom: 4px solid #4169e1; } /* 日式 - 深藍 */
+        .t-kr { border-bottom: 4px solid #ba55d3; } /* 韓式 - 紫色 */
+        .t-th { border-bottom: 4px solid #2ecc71; } /* 泰式 - 鮮綠 */
+        .t-we { border-bottom: 4px solid #e67e22; } /* 西式 - 咖啡橘 */
 
         /* 結果顯示 */
         .overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.98); z-index: 1000; flex-direction: column;
-            justify-content: center; align-items: center; backdrop-filter: blur(12px);
+            background: rgba(0,0,0,0.97); z-index: 1000; flex-direction: column;
+            justify-content: center; align-items: center; backdrop-filter: blur(10px);
         }
         .res-container {
-            width: 85%; max-width: 380px; background: #0a0a0a; border: 2px solid var(--neon-gold);
-            border-radius: 20px; padding: 40px 20px; text-align: center;
-            box-shadow: 0 0 50px rgba(212,175,55,0.3);
+            width: 88%; max-width: 380px; background: #111; border: 2px solid var(--neon-gold);
+            border-radius: 24px; padding: 45px 20px; text-align: center;
         }
-        .res-label { color: var(--neon-gold); font-size: 0.8rem; letter-spacing: 4px; margin-bottom: 15px; }
-        .res-name { font-size: 3.2rem; font-weight: 900; color: #fff; margin-bottom: 30px; text-shadow: 0 0 15px var(--neon-gold); }
+        .res-name { font-size: 2.8rem; font-weight: 900; color: #fff; margin: 25px 0; text-shadow: 0 0 15px var(--neon-gold); }
 
         .btn-group { display: flex; flex-direction: column; gap: 12px; }
         .btn-main {
-            background: var(--neon-gold); color: #000; text-decoration: none;
+            background: var(--btn-grad); color: #000; text-decoration: none;
             padding: 18px; border-radius: 50px; font-weight: 900; font-size: 1.1rem;
-            transition: 0.2s;
         }
         .btn-sub {
             background: transparent; color: var(--neon-gold); text-decoration: none;
             padding: 14px; border: 1px solid var(--neon-gold); border-radius: 50px; font-size: 0.9rem;
         }
 
-        /* 底部控制面板 */
-        .footer-panel {
+        .footer {
             position: fixed; bottom: 0; width: 100%; padding: 25px 0;
-            background: linear-gradient(0deg, #000 70%, transparent 100%);
+            background: linear-gradient(0deg, #000 80%, transparent);
             display: flex; justify-content: center; z-index: 200;
         }
-        .exec-btn {
-            background: var(--neon-gold); color: #000; border: none;
-            padding: 18px 80px; font-size: 1.2rem; font-weight: 900;
-            border-radius: 50px; cursor: pointer; box-shadow: 0 5px 20px rgba(212,175,55,0.4);
-            letter-spacing: 8px;
+        .start-btn {
+            background: var(--btn-grad); color: #000; border: none;
+            padding: 18px 90px; font-size: 1.3rem; font-weight: 900;
+            border-radius: 50px; cursor: pointer; letter-spacing: 10px;
         }
-        .exec-btn:disabled { background: #444; color: #888; box-shadow: none; }
 
-        @keyframes rolling { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-        .is-rolling { animation: rolling 0.1s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+        .is-rolling { animation: pulse 0.1s infinite; }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>饗宴指令 MATRIX</h1>
-    <p>CUISINE SELECTION PROTOCOL</p>
+    <h1>終極美食矩陣</h1>
+    <p>TOTAL CUISINE MATRIX v6.0</p>
 </header>
 
-<div class="slot-display" id="slot-machine">
-    <div id="rolling-text">READY_SYSTEM</div>
+<div class="slot-display">
+    <div id="rolling-text">READY_TO_SCAN</div>
 </div>
 
 <div class="manual-grid" id="menu-grid">
     </div>
 
-<div class="footer-panel">
-    <button class="exec-btn" id="btn-run">啟動</button>
+<div class="footer">
+    <button class="start-btn" id="btn-run">隨機啟動</button>
 </div>
 
 <div class="overlay" id="overlay">
     <div class="res-container">
-        <div class="res-label">系統決定目標</div>
+        <div style="color:var(--neon-gold); letter-spacing:4px; font-size:0.8rem;">[ 系統決策目標 ]</div>
         <div class="res-name" id="res-name">---</div>
         <div class="btn-group">
-            <a id="lnk-map" class="btn-main" target="_blank">📍 搜尋附近店家</a>
+            <a id="lnk-map" class="btn-main" target="_blank">📍 尋找附近店家</a>
             <a id="lnk-blog" class="btn-sub" target="_blank">📜 查看食記推薦</a>
-            <div id="btn-close" style="color:#555; margin-top:15px; cursor:pointer; font-size:0.8rem;">[ 重新掃描 ]</div>
+            <div id="btn-close" style="color:#444; margin-top:15px; cursor:pointer;">[ 返回主矩陣 ]</div>
         </div>
     </div>
 </div>
 
 <script>
     const foodDatabase = [
-        { cat: "台式經典", icon: "🍱", style: "c-tw", items: ["滷肉飯", "牛肉麵", "排骨便當", "雞肉飯", "控肉飯", "鵝肉切盤", "擔仔麵", "台式熱炒", "薑母鴨", "羊肉爐", "石頭火鍋", "蚵仔煎", "大腸麵線", "臭豆腐", "彰化肉圓", "割包", "筒仔米糕", "鹹酥雞", "麻辣燙", "東山鴨頭"] },
-        { cat: "連鎖快餐", icon: "🍟", style: "c-ff", items: ["麥當勞", "肯德基", "漢堡王", "摩斯漢堡", "頂呱呱", "Subway", "必勝客", "拿坡里炸雞", "胖老爹", "起家雞", "Nene Chicken", "丹丹漢堡", "21世紀風味館", "德州美墨炸雞"] },
-        { cat: "日式職人", icon: "🍣", style: "c-jp", items: ["豚骨拉麵", "握壽司", "海鮮丼", "炸豬排定食", "讚岐烏龍麵", "日式咖哩", "天婦羅", "壽喜燒", "居酒屋串燒", "大阪燒", "鰻魚飯", "親子丼", "和牛燒肉", "秋刀魚定食"] },
-        { cat: "韓式潮流", icon: "🥘", style: "c-kr", items: ["韓式炸雞", "石鍋拌飯", "部隊鍋", "韓式烤肉", "辣炒年糕", "海鮮煎餅", "人蔘雞湯", "韓式炸醬麵", "馬鈴薯排骨湯", "韓式冷麵"] },
-        { cat: "泰式風味", icon: "🦐", style: "c-th", items: ["月亮蝦餅", "打拋豬", "泰式檸檬魚", "酸辣蝦湯", "綠咖哩雞", "泰式炒河粉", "涼拌青木瓜", "椒麻雞", "泰式奶茶", "菠蘿炒飯"] },
-        { cat: "美義風味", items: ["手打漢堡", "炭烤牛排", "奶油培根麵", "青醬海鮮麵", "拿坡里披薩", "義式燉飯", "千層麵", "美式烤肋排", "芝加哥深盤披薩"], icon: "🍕", style: "c-we" },
-        { cat: "港式茶點", icon: "🥟", style: "c-hk", items: ["燒賣蝦餃", "干炒牛河", "港式菠蘿油", "臘味飯", "腸粉", "腐皮捲", "絲襪奶茶", "公仔麵", "冰火菠蘿油", "燒臘拼盤"] },
-        { cat: "甜點飲品", icon: "🧋", style: "c-ds", items: ["珍珠奶茶", "芒果冰", "手工豆花", "燒仙草", "紅豆餅", "法式可麗餅", "提拉米蘇", "舒芙蕾鬆餅", "雞蛋糕", "木瓜牛奶"] }
+        { cat: "台式熱炒", icon: "🔥", style: "t-stir", items: ["客家小炒", "鳳梨蝦球", "薑絲大腸", "蔥爆牛肉", "糖醋排骨", "三杯雞", "五更腸旺", "宮保雞丁", "蒜泥白肉", "蒼蠅頭", "鐵板豆腐", "蚵仔酥", "炒海瓜子", "九層塔烘蛋", "金沙苦瓜"] },
+        { cat: "街邊小吃", icon: "🍢", style: "t-street", items: ["蚵仔煎", "大腸麵線", "臭豆腐", "肉圓", "割包", "筒仔米糕", "豬血糕", "地瓜球", "車輪餅", "甜不辣", "鹽水雞", "滷味", "蔥油餅", "胡椒餅", "雞排", "大腸包小腸", "炭烤玉米"] },
+        { cat: "連鎖快餐", icon: "🍔", style: "t-fast", items: ["麥當勞", "肯德基", "漢堡王", "摩斯漢堡", "Subway", "必勝客", "拿坡里炸雞", "胖老爹", "丹丹漢堡", "起家雞", "Nene Chicken", "21世紀風味館", "德州美墨炸雞", "達美樂"] },
+        { cat: "日式職人", icon: "🍣", style: "t-jp", items: ["豚骨拉麵", "握壽司", "豪華海鮮丼", "炸豬排定食", "讚岐烏龍麵", "日式咖哩飯", "天婦羅", "居酒屋串燒", "壽喜燒", "大阪燒", "鰻魚飯", "親子丼", "和牛燒肉", "沾麵", "蕎麥麵"] },
+        { cat: "韓式潮流", icon: "🇰🇷", style: "t-kr", items: ["韓式炸雞", "石鍋拌飯", "韓式烤肉", "部隊鍋", "辣炒年糕", "海鮮煎餅", "人蔘雞湯", "韓式炸醬麵", "馬鈴薯排骨湯", "韓式冷麵", "雪濃湯", "春川炒雞"] },
+        { cat: "泰式風味", icon: "🇹🇭", style: "t-th", items: ["月亮蝦餅", "打拋豬", "泰式檸檬魚", "冬蔭功酸辣湯", "綠咖哩雞", "泰式炒河粉", "涼拌青木瓜", "椒麻雞", "泰式奶茶", "菠蘿炒飯", "椰汁咖哩"] },
+        { cat: "港式茶點", icon: "🇭🇰", style: "t-hk", items: ["蝦餃燒賣", "干炒牛河", "港式菠蘿油", "臘味飯", "腸粉", "腐皮捲", "絲襪奶茶", "燒臘三寶飯", "黯然銷魂飯", "西多士", "爆漿流沙包", "牛腩河粉"] },
+        { cat: "中式麵點", icon: "🥟", style: "t-stir", items: ["牛肉麵", "水餃", "小籠湯包", "紅油抄手", "大滷麵", "牛肉捲餅", "鍋貼", "炸醬麵", "麻醬麵", "擔擔麵", "鮮肉包", "蒸餃"] },
+        { cat: "美義風味", icon: "🍕", style: "t-we", items: ["手打漢堡", "炭烤牛排", "奶油培根麵", "青醬海鮮麵", "拿坡里披薩", "義式燉飯", "千層麵", "美式烤肋排", "紐約風披薩", "炸雞翅"] },
+        { cat: "南洋風味", icon: "🏝️", style: "t-th", items: ["海南雞飯", "越式河粉", "肉骨茶", "叻沙麵", "越式法國麵包", "印尼炒麵", "沙嗲串燒", "越南春捲", "咖椰吐司"] }
     ];
 
     const allItems = foodDatabase.flatMap(d => d.items);
@@ -157,46 +150,41 @@
     const rollingText = document.getElementById('rolling-text');
     const menuGrid = document.getElementById('menu-grid');
 
-    // 生成分類卡片
     foodDatabase.forEach(data => {
         const card = document.createElement('div');
         card.className = `cat-card ${data.style}`;
         card.innerHTML = `
             <span class="cat-emoji">${data.icon}</span>
             <div class="cat-title">${data.cat}</div>
-            <div class="cat-subtitle">共 ${data.items.length} 項品項</div>
+            <div class="cat-info">${data.items.length} OPTIONS</div>
         `;
         card.onclick = () => startRolling(data.items, data.cat);
         menuGrid.appendChild(card);
     });
 
-    btnRun.onclick = () => startRolling(allItems, "全域隨機");
+    btnRun.onclick = () => startRolling(allItems, "ALL_MATRIX");
 
-    function startRolling(arr, catName) {
+    function startRolling(arr, cat) {
         if(btnRun.disabled) return;
         btnRun.disabled = true;
         rollingText.classList.add('is-rolling');
         window.scrollTo({top: 0, behavior: 'smooth'});
 
-        let counter = 0;
-        const speed = 70;
-        const duration = 20;
-
+        let i = 0;
         const timer = setInterval(() => {
             rollingText.innerText = arr[Math.floor(Math.random() * arr.length)];
-            counter++;
-            if(counter > duration) {
+            i++;
+            if(i > 22) {
                 clearInterval(timer);
-                const final = arr[Math.floor(Math.random() * arr.length)];
-                rollingText.innerText = final;
+                const result = arr[Math.floor(Math.random() * arr.length)];
+                rollingText.innerText = result;
                 rollingText.classList.remove('is-rolling');
-                
                 setTimeout(() => {
-                    showResult(final, catName);
+                    showResult(result, cat);
                     btnRun.disabled = false;
                 }, 600);
             }
-        }, speed);
+        }, 70);
     }
 
     function showResult(name, cat) {
@@ -208,7 +196,7 @@
 
     document.getElementById('btn-close').onclick = () => {
         document.getElementById('overlay').style.display = 'none';
-        rollingText.innerText = 'READY_SYSTEM';
+        rollingText.innerText = 'READY_TO_SCAN';
     };
 </script>
 </body>
