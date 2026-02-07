@@ -3,292 +3,212 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>饗宴指令 - 視覺強化版</title>
+    <title>饗宴指令 - 旗艦矩陣系統</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
         :root {
             --neon-gold: #d4af37;
             --cyber-black: #050505;
-            --dark-gray: #1a1a1a;
-            --light-gray: #ccc;
-            --medium-gray: #666;
+            --card-bg: #121212;
+            --accent-red: #ff4d4d;
+            --accent-blue: #00a8ff;
+            --accent-green: #00d2d3;
         }
 
         body {
-            margin: 0; background: var(--cyber-black); color: var(--light-gray);
-            font-family: "PingFang TC", "Microsoft JhengHei", sans-serif;
+            margin: 0; background: var(--cyber-black); color: #e0e0e0;
+            font-family: 'Noto Sans TC', sans-serif;
             display: flex; flex-direction: column; align-items: center;
             min-height: 100vh; overflow-x: hidden;
-            position: relative; /* For the footer panel */
         }
 
-        /* 頂部標題 */
-        header { margin: 20px 0 10px; text-align: center; }
-        header h1 { 
-            font-size: 1.2rem; letter-spacing: 12px; color: var(--neon-gold); margin: 0;
-            text-shadow: 0 0 8px rgba(212,175,55,0.6);
-        }
-        header p {
-            font-size: 0.75rem; color: var(--medium-gray); margin-top: 5px; letter-spacing: 2px;
-        }
+        header { margin: 25px 0; text-align: center; border-bottom: 1px solid #222; width: 100%; padding-bottom: 15px; }
+        header h1 { font-size: 1.4rem; font-weight: 900; letter-spacing: 12px; color: var(--neon-gold); margin: 0; }
+        header p { font-size: 0.7rem; color: #666; letter-spacing: 4px; margin-top: 5px; }
 
-        /* 核心滾動顯示區 */
-        .slot-machine {
-            width: 330px; height: 120px; background: #000; border: 2px solid var(--neon-gold);
+        /* 核心滾動螢幕 */
+        .slot-display {
+            width: 90%; max-width: 420px; height: 140px; 
+            background: linear-gradient(180deg, #000 0%, #111 50%, #000 100%);
+            border: 3px solid var(--neon-gold); border-radius: 15px;
             display: flex; justify-content: center; align-items: center;
-            margin-bottom: 25px; overflow: hidden; position: sticky; top: 15px; z-index: 100;
-            box-shadow: 0 0 30px rgba(212,175,55,0.4), inset 0 0 25px rgba(212,175,55,0.3);
-            border-radius: 5px;
-            transition: box-shadow 0.3s ease-in-out;
-        }
-        .slot-machine.active-glow {
-             box-shadow: 0 0 40px var(--neon-gold), inset 0 0 30px var(--neon-gold);
+            margin-bottom: 30px; position: sticky; top: 15px; z-index: 100;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.8), 0 0 15px rgba(212,175,55,0.2);
         }
         #rolling-text {
-            font-family: 'Share Tech Mono', monospace; /* 更具科技感的字體 */
-            font-size: 2.4rem; font-weight: bold; color: var(--neon-gold);
-            text-shadow: 0 0 15px rgba(212,175,55,0.8);
-            letter-spacing: 2px; text-align: center; white-space: nowrap;
-            padding: 0 10px; /* 防止文字太長時貼邊 */
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 2.2rem; font-weight: bold; color: var(--neon-gold);
+            text-shadow: 0 0 20px rgba(212,175,55,0.6);
+            text-align: center; padding: 0 10px;
         }
 
-        /* 分類網格 */
+        /* 分類網格：食慾增強設計 */
         .manual-grid {
-            display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 95%; max-width: 480px; padding-bottom: 120px; /* Space for footer */
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;
+            width: 94%; max-width: 500px; padding-bottom: 130px;
         }
-        .category-card {
-            background: var(--dark-gray); border: 1px solid #444; padding: 20px 10px; text-align: center; cursor: pointer;
-            border-radius: 5px; transition: all 0.2s ease-in-out;
-            position: relative; overflow: hidden;
+        .cat-card {
+            background: var(--card-bg); border: 1px solid #222; border-radius: 12px;
+            padding: 20px 10px; text-align: center; cursor: pointer;
+            transition: all 0.2s ease; position: relative; overflow: hidden;
         }
-        .category-card::before { /* hover 效果 */
-            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-            background: rgba(212,175,55,0.1); transition: all 0.3s ease-in-out;
-        }
-        .category-card:hover::before { left: 0; }
-        .category-card:active { border-color: var(--neon-gold); background: #2a2a2a; transform: scale(0.98); }
-        .cat-name { color: var(--neon-gold); font-size: 1rem; font-weight: bold; letter-spacing: 1px; }
-        .cat-info { color: var(--medium-gray); font-size: 0.7rem; margin-top: 5px; }
+        .cat-card:active { transform: scale(0.95); background: #1a1a1a; }
+        .cat-emoji { font-size: 2.5rem; display: block; margin-bottom: 10px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5)); }
+        .cat-title { font-weight: 900; font-size: 1rem; color: #fff; letter-spacing: 1px; }
+        .cat-subtitle { font-size: 0.65rem; color: #666; margin-top: 4px; }
 
-        /* 結果彈窗 */
+        /* 分類邊框色帶 */
+        .c-tw { border-top: 4px solid #f39c12; } /* 台式 */
+        .c-jp { border-top: 4px solid #3498db; } /* 日式 */
+        .c-ff { border-top: 4px solid #e74c3c; } /* 快餐 */
+        .c-kr { border-top: 4px solid #9b59b6; } /* 韓式 */
+        .c-th { border-top: 4px solid #2ecc71; } /* 泰式 */
+        .c-we { border-top: 4px solid #e67e22; } /* 美義 */
+        .c-hk { border-top: 4px solid #1abc9c; } /* 港式 */
+        .c-ds { border-top: 4px solid #fd79a8; } /* 甜點 */
+
+        /* 結果顯示 */
         .overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); z-index: 1000; flex-direction: column;
-            justify-content: center; align-items: center; backdrop-filter: blur(15px);
-            animation: fadeIn 0.3s forwards;
+            background: rgba(0,0,0,0.98); z-index: 1000; flex-direction: column;
+            justify-content: center; align-items: center; backdrop-filter: blur(12px);
         }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .res-container {
+            width: 85%; max-width: 380px; background: #0a0a0a; border: 2px solid var(--neon-gold);
+            border-radius: 20px; padding: 40px 20px; text-align: center;
+            box-shadow: 0 0 50px rgba(212,175,55,0.3);
+        }
+        .res-label { color: var(--neon-gold); font-size: 0.8rem; letter-spacing: 4px; margin-bottom: 15px; }
+        .res-name { font-size: 3.2rem; font-weight: 900; color: #fff; margin-bottom: 30px; text-shadow: 0 0 15px var(--neon-gold); }
 
-        .res-container { 
-            width: 90%; max-width: 400px; text-align: center;
-            border: 2px solid var(--neon-gold); background: #0a0a0a; padding: 40px 25px;
-            border-radius: 8px; box-shadow: 0 0 50px rgba(0,0,0,0.8), 0 0 20px rgba(212,175,55,0.5);
-            animation: popIn 0.4s ease-out forwards;
+        .btn-group { display: flex; flex-direction: column; gap: 12px; }
+        .btn-main {
+            background: var(--neon-gold); color: #000; text-decoration: none;
+            padding: 18px; border-radius: 50px; font-weight: 900; font-size: 1.1rem;
+            transition: 0.2s;
         }
-        @keyframes popIn { 
-            from { transform: scale(0.8) translateY(20px); opacity: 0; } 
-            to { transform: scale(1) translateY(0); opacity: 1; } 
+        .btn-sub {
+            background: transparent; color: var(--neon-gold); text-decoration: none;
+            padding: 14px; border: 1px solid var(--neon-gold); border-radius: 50px; font-size: 0.9rem;
         }
 
-        .res-status { color: var(--neon-gold); font-size: 0.8rem; letter-spacing: 2px; margin-bottom: 15px; }
-        .res-food-name { 
-            font-family: 'Montserrat', sans-serif; /* 更具衝擊力的字體 */
-            font-size: 3rem; font-weight: 900; margin: 20px 0 30px; color: #fff; 
-            text-shadow: 0 0 20px rgba(212,175,55,0.8); line-height: 1.2;
-        }
-        
-        /* 新增資訊區 */
-        .info-panel {
-            background: #181818; border: 1px solid #333; padding: 15px; margin-bottom: 25px;
-            border-radius: 5px; text-align: left; font-size: 0.85rem; line-height: 1.6;
-        }
-        .info-panel span { color: var(--neon-gold); font-weight: bold; margin-right: 8px; }
-
-        .btn-group { display: flex; flex-direction: column; gap: 10px; }
-        .res-btn {
-            text-decoration: none; color: var(--cyber-black); background: var(--neon-gold);
-            padding: 16px; font-size: 1rem; font-weight: bold; letter-spacing: 1px; text-align: center;
-            border-radius: 4px; transition: background 0.2s;
-        }
-        .res-btn:hover { background: #e0b842; }
-        .res-btn-alt {
-            text-decoration: none; color: var(--neon-gold); background: transparent;
-            border: 1px solid var(--neon-gold); padding: 14px; font-size: 0.9rem; text-align: center;
-            border-radius: 4px; transition: background 0.2s, color 0.2s;
-        }
-        .res-btn-alt:hover { background: rgba(212,175,55,0.1); color: #fff; }
-
-        .btn-close { margin-top: 30px; color: var(--medium-gray); cursor: pointer; font-size: 0.8rem; letter-spacing: 3px; }
-        .btn-close:hover { color: var(--light-gray); }
-        
         /* 底部控制面板 */
         .footer-panel {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            background: linear-gradient(to top, var(--cyber-black), #000000a0);
-            border-top: 1px solid #222; padding: 15px 0; z-index: 200;
-            display: flex; justify-content: center; align-items: center;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.8);
+            position: fixed; bottom: 0; width: 100%; padding: 25px 0;
+            background: linear-gradient(0deg, #000 70%, transparent 100%);
+            display: flex; justify-content: center; z-index: 200;
         }
-        .exec-btn { 
-            background: var(--neon-gold); color: var(--cyber-black); border: none; 
-            padding: 18px 80px; font-size: 1.2rem; font-weight: bold; letter-spacing: 4px; cursor: pointer;
-            border-radius: 50px; box-shadow: 0 0 20px rgba(212,175,55,0.6);
-            transition: all 0.3s ease-in-out;
+        .exec-btn {
+            background: var(--neon-gold); color: #000; border: none;
+            padding: 18px 80px; font-size: 1.2rem; font-weight: 900;
+            border-radius: 50px; cursor: pointer; box-shadow: 0 5px 20px rgba(212,175,55,0.4);
+            letter-spacing: 8px;
         }
-        .exec-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 25px rgba(212,175,55,0.8); }
-        .exec-btn:disabled { 
-            background: #555; cursor: not-allowed; box-shadow: none; 
-            transform: translateY(0);
-        }
+        .exec-btn:disabled { background: #444; color: #888; box-shadow: none; }
+
+        @keyframes rolling { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        .is-rolling { animation: rolling 0.1s infinite; }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Montserrat:wght@900&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <header>
-        <h1>饗宴指令：矩陣滾動</h1>
-        <p>INITIATING FOOD SELECTION PROTOCOL</p>
-    </header>
+<header>
+    <h1>饗宴指令 MATRIX</h1>
+    <p>CUISINE SELECTION PROTOCOL</p>
+</header>
 
-    <div class="mode-nav">
-        <button id="nav-auto" class="mode-btn active">全域隨機</button>
-        <button id="nav-manual" class="mode-btn">分類隨機</button>
+<div class="slot-display" id="slot-machine">
+    <div id="rolling-text">READY_SYSTEM</div>
+</div>
+
+<div class="manual-grid" id="menu-grid">
     </div>
 
-    <div class="slot-machine" id="slot-machine-display">
-        <div id="rolling-text">SCANNING MENU...</div>
-    </div>
+<div class="footer-panel">
+    <button class="exec-btn" id="btn-run">啟動</button>
+</div>
 
-    <div id="view-manual" class="manual-grid" style="display:none;"></div>
-
-    <div class="footer-panel">
-        <button class="exec-btn" id="btn-run">啟動執行</button>
-    </div>
-
-    <div class="overlay" id="overlay">
-        <div class="res-container">
-            <div class="res-status" id="res-tag">[ 指令解碼完成 ]</div>
-            <div class="res-food-name" id="res-food">---</div>
-            
-            <div class="info-panel">
-                <div><span>評分指數:</span> <span id="rating-score">N/A</span></div>
-                <div><span>建議時段:</span> <span id="suggested-time">N/A</span></div>
-                <div><span>平均價格:</span> <span id="avg-price">N/A</span></div>
-            </div>
-
-            <div class="btn-group">
-                <a id="lnk-map" class="res-btn" target="_blank">📍 導航附近店家</a>
-                <a id="lnk-blog" class="res-btn-alt" target="_blank">📜 查看最新食記</a>
-            </div>
+<div class="overlay" id="overlay">
+    <div class="res-container">
+        <div class="res-label">系統決定目標</div>
+        <div class="res-name" id="res-name">---</div>
+        <div class="btn-group">
+            <a id="lnk-map" class="btn-main" target="_blank">📍 搜尋附近店家</a>
+            <a id="lnk-blog" class="btn-sub" target="_blank">📜 查看食記推薦</a>
+            <div id="btn-close" style="color:#555; margin-top:15px; cursor:pointer; font-size:0.8rem;">[ 重新掃描 ]</div>
         </div>
-        <div class="btn-close" id="btn-close">[ 重新掃描 ]</div>
     </div>
+</div>
 
 <script>
-    const foodData = [
-        { cat: "台式在地", items: ["滷肉飯", "牛肉麵", "炸排骨飯", "控肉飯", "雞肉飯", "石頭火鍋", "薑母鴨", "羊肉爐", "白斬雞", "台式熱炒", "筒仔米糕", "肉羹湯", "棺材板", "大麵羹"] },
-        { cat: "日式職人", items: ["豚骨拉麵", "握壽司", "豪華海鮮丼", "炸豬排定食", "讚岐烏龍麵", "日式咖哩", "天婦羅", "串燒居酒屋", "壽喜燒", "章魚燒", "大阪燒"] },
-        { cat: "韓式潮流", items: ["韓式炸雞", "石鍋拌飯", "部隊鍋", "韓式烤肉", "辣炒年糕", "海鮮煎餅", "人蔘雞湯", "韓式泡麵", "春川炒雞"] },
-        { cat: "泰式風味", items: ["月亮蝦餅", "打拋豬", "檸檬魚", "酸辣蝦湯", "綠咖哩雞", "泰式炒河粉", "涼拌青木瓜", "椒麻雞"] },
-        { cat: "美義風味", items: ["雙層漢堡", "炭烤牛排", "義大利麵", "拿坡里披薩", "義式燉飯", "千層麵", "美式炸雞", "熱狗堡"] },
-        { cat: "港式南洋", items: ["燒賣蝦餃", "干炒牛河", "海南雞飯", "越式河粉", "肉骨茶", "叻沙麵", "越式法國麵包", "廣式燒臘", "港式煲仔飯"] },
-        { cat: "街頭小吃", items: ["蚵仔煎", "臭豆腐", "彰化肉圓", "割包", "大腸麵線", "地瓜球", "雞排", "潤餅", "甜不辣", "鹽水雞", "滷味攤", "蔥油餅"] },
-        { cat: "深夜宵夜", items: ["鹹酥雞", "麻辣燙", "東山鴨頭", "永和豆漿", "清粥小菜", "涼麵", "燒烤攤"] },
-        { cat: "特色飲品", items: ["珍珠奶茶", "冬瓜茶", "楊桃汁", "仙草冰", "豆花"] } /* 新增飲料/甜點類 */
+    const foodDatabase = [
+        { cat: "台式經典", icon: "🍱", style: "c-tw", items: ["滷肉飯", "牛肉麵", "排骨便當", "雞肉飯", "控肉飯", "鵝肉切盤", "擔仔麵", "台式熱炒", "薑母鴨", "羊肉爐", "石頭火鍋", "蚵仔煎", "大腸麵線", "臭豆腐", "彰化肉圓", "割包", "筒仔米糕", "鹹酥雞", "麻辣燙", "東山鴨頭"] },
+        { cat: "連鎖快餐", icon: "🍟", style: "c-ff", items: ["麥當勞", "肯德基", "漢堡王", "摩斯漢堡", "頂呱呱", "Subway", "必勝客", "拿坡里炸雞", "胖老爹", "起家雞", "Nene Chicken", "丹丹漢堡", "21世紀風味館", "德州美墨炸雞"] },
+        { cat: "日式職人", icon: "🍣", style: "c-jp", items: ["豚骨拉麵", "握壽司", "海鮮丼", "炸豬排定食", "讚岐烏龍麵", "日式咖哩", "天婦羅", "壽喜燒", "居酒屋串燒", "大阪燒", "鰻魚飯", "親子丼", "和牛燒肉", "秋刀魚定食"] },
+        { cat: "韓式潮流", icon: "🥘", style: "c-kr", items: ["韓式炸雞", "石鍋拌飯", "部隊鍋", "韓式烤肉", "辣炒年糕", "海鮮煎餅", "人蔘雞湯", "韓式炸醬麵", "馬鈴薯排骨湯", "韓式冷麵"] },
+        { cat: "泰式風味", icon: "🦐", style: "c-th", items: ["月亮蝦餅", "打拋豬", "泰式檸檬魚", "酸辣蝦湯", "綠咖哩雞", "泰式炒河粉", "涼拌青木瓜", "椒麻雞", "泰式奶茶", "菠蘿炒飯"] },
+        { cat: "美義風味", items: ["手打漢堡", "炭烤牛排", "奶油培根麵", "青醬海鮮麵", "拿坡里披薩", "義式燉飯", "千層麵", "美式烤肋排", "芝加哥深盤披薩"], icon: "🍕", style: "c-we" },
+        { cat: "港式茶點", icon: "🥟", style: "c-hk", items: ["燒賣蝦餃", "干炒牛河", "港式菠蘿油", "臘味飯", "腸粉", "腐皮捲", "絲襪奶茶", "公仔麵", "冰火菠蘿油", "燒臘拼盤"] },
+        { cat: "甜點飲品", icon: "🧋", style: "c-ds", items: ["珍珠奶茶", "芒果冰", "手工豆花", "燒仙草", "紅豆餅", "法式可麗餅", "提拉米蘇", "舒芙蕾鬆餅", "雞蛋糕", "木瓜牛奶"] }
     ];
 
-    const allItems = foodData.flatMap(d => d.items);
+    const allItems = foodDatabase.flatMap(d => d.items);
     const btnRun = document.getElementById('btn-run');
     const rollingText = document.getElementById('rolling-text');
-    const viewManual = document.getElementById('view-manual');
-    const slotMachineDisplay = document.getElementById('slot-machine-display');
+    const menuGrid = document.getElementById('menu-grid');
 
-    // 隨機評分和時段生成器
-    function generateFoodInfo() {
-        const rating = (Math.random() * 2 + 3).toFixed(1); // 3.0 到 5.0
-        const times = ["午餐", "晚餐", "全天候", "宵夜", "早午餐"];
-        const time = times[Math.floor(Math.random() * times.length)];
-        const prices = ["$100-200", "$200-400", "$400-800", "$800+"];
-        const price = prices[Math.floor(Math.random() * prices.length)];
-        return { rating, time, price };
-    }
-
-    // 初始化手動分類按鈕，增加點擊滾動功能
-    foodData.forEach(data => {
+    // 生成分類卡片
+    foodDatabase.forEach(data => {
         const card = document.createElement('div');
-        card.className = 'category-card';
+        card.className = `cat-card ${data.style}`;
         card.innerHTML = `
-            <div class="cat-name">${data.cat}</div>
-            <div class="cat-info">隨機抽取 ${data.items.length} 項選項</div>
+            <span class="cat-emoji">${data.icon}</span>
+            <div class="cat-title">${data.cat}</div>
+            <div class="cat-subtitle">共 ${data.items.length} 項品項</div>
         `;
-        card.onclick = () => {
-            if(btnRun.disabled) return;
-            startRollingAnimation(data.items, data.cat);
-        };
-        viewManual.appendChild(card);
+        card.onclick = () => startRolling(data.items, data.cat);
+        menuGrid.appendChild(card);
     });
 
-    // 全域隨機按鈕
-    btnRun.onclick = () => {
-        startRollingAnimation(allItems, "全域隨機");
-    };
+    btnRun.onclick = () => startRolling(allItems, "全域隨機");
 
-    // 核心滾動動畫函式
-    function startRollingAnimation(sourceArray, catName) {
+    function startRolling(arr, catName) {
+        if(btnRun.disabled) return;
         btnRun.disabled = true;
-        slotMachineDisplay.classList.add('active-glow'); // 啟動光暈
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        
-        let count = 0;
-        const totalTicks = 20; // 滾動次數
-        
+        rollingText.classList.add('is-rolling');
+        window.scrollTo({top: 0, behavior: 'smooth'});
+
+        let counter = 0;
+        const speed = 70;
+        const duration = 20;
+
         const timer = setInterval(() => {
-            rollingText.innerText = sourceArray[Math.floor(Math.random() * sourceArray.length)];
-            count++;
-            
-            if(count > totalTicks) {
+            rollingText.innerText = arr[Math.floor(Math.random() * arr.length)];
+            counter++;
+            if(counter > duration) {
                 clearInterval(timer);
-                const finalItem = sourceArray[Math.floor(Math.random() * sourceArray.length)];
-                rollingText.innerText = finalItem;
+                const final = arr[Math.floor(Math.random() * arr.length)];
+                rollingText.innerText = final;
+                rollingText.classList.remove('is-rolling');
                 
                 setTimeout(() => {
-                    slotMachineDisplay.classList.remove('active-glow'); // 停止光暈
-                    showResult(catName, finalItem);
+                    showResult(final, catName);
                     btnRun.disabled = false;
-                }, 700); // 稍微延遲彈窗，讓滾動停止更明顯
+                }, 600);
             }
-        }, 70); // 滾動速度
+        }, speed);
     }
 
-    function showResult(cat, name) {
+    function showResult(name, cat) {
         document.getElementById('overlay').style.display = 'flex';
-        document.getElementById('res-tag').innerText = `[ ${cat} 模式指令完成 ]`;
-        document.getElementById('res-food').innerText = name;
-        
-        // 載入隨機生成的資訊
-        const info = generateFoodInfo();
-        document.getElementById('rating-score').innerText = info.rating + ' / 5.0';
-        document.getElementById('suggested-time').innerText = info.time;
-        document.getElementById('avg-price').innerText = info.price;
-
+        document.getElementById('res-name').innerText = name;
         document.getElementById('lnk-map').href = `https://www.google.com/maps/search/${encodeURIComponent(name)}`;
         document.getElementById('lnk-blog').href = `https://www.google.com/search?q=${encodeURIComponent(name + " 推薦食記")}`;
     }
 
     document.getElementById('btn-close').onclick = () => {
         document.getElementById('overlay').style.display = 'none';
-        rollingText.innerText = 'SCANNING MENU...'; // 重置顯示文字
-    };
-
-    // 導覽切換
-    document.getElementById('nav-auto').onclick = function() {
-        this.classList.add('active'); document.getElementById('nav-manual').classList.remove('active');
-        document.getElementById('view-manual').style.display = 'none'; btnRun.style.display = 'block';
-        rollingText.innerText = 'SCANNING MENU...';
-    };
-    document.getElementById('nav-manual').onclick = function() {
-        this.classList.add('active'); document.getElementById('nav-auto').classList.remove('active');
-        document.getElementById('view-manual').style.display = 'grid'; btnRun.style.display = 'none';
-        rollingText.innerText = 'SELECT CATEGORY...';
+        rollingText.innerText = 'READY_SYSTEM';
     };
 </script>
 </body>
