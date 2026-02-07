@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>饗宴指令 - 影像強化修復版</title>
+    <title>饗宴指令 - 真實影像版</title>
     <style>
         :root {
             --neon-gold: #d4af37;
@@ -22,6 +22,7 @@
         header { margin: 30px 0 15px; text-align: center; }
         header h1 { font-size: 1.1rem; letter-spacing: 10px; color: var(--neon-gold); margin: 0; }
         
+        /* 模式切換 */
         .mode-nav { display: flex; gap: 8px; margin-bottom: 25px; }
         .mode-btn {
             background: none; border: 1px solid #333; color: #666; padding: 8px 18px;
@@ -49,14 +50,12 @@
         }
         .food-card span.label { font-size: 0.8rem; color: var(--neon-gold); }
 
-        /* --- 影像結果彈窗 (修復圖片顯示) --- */
+        /* --- 結果彈窗：顯示真實美食圖片 --- */
         .overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--overlay-bg); z-index: 1000; flex-direction: column;
             justify-content: center; align-items: center; backdrop-filter: blur(15px);
-            animation: fadeIn 0.4s ease;
         }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         .res-container { 
             width: 88%; max-width: 380px; text-align: center;
@@ -66,37 +65,32 @@
             position: relative;
         }
 
-        /* 食物圖片顯示區 - 修復版 */
+        /* 食物圖片框架 */
         .food-img-frame {
             width: 100%; height: 220px; background: #000;
             margin: 15px 0; border: 1px solid #333;
             overflow: hidden; position: relative;
-            box-shadow: inset 0 0 20px #000;
         }
         .food-img-frame img {
             width: 100%; height: 100%; object-fit: cover;
-            opacity: 0; transition: opacity 0.8s ease;
+            display: none; /* 初始隱藏，讀取完才顯示 */
         }
         .img-loader {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
             font-size: 0.75rem; color: var(--neon-gold); letter-spacing: 2px;
-            width: 100%; text-align: center;
         }
 
         .res-cat-tag { color: var(--neon-gold); font-size: 0.7rem; letter-spacing: 4px; margin-bottom: 5px; }
-        .res-food-name { 
-            font-size: 2.5rem; font-weight: 900; margin-bottom: 20px; color: #fff;
-            text-shadow: 0 0 20px rgba(255,255,255,0.2);
-        }
+        .res-food-name { font-size: 2.2rem; font-weight: bold; margin-bottom: 20px; color: #fff; }
         
         .res-btn-group { display: flex; flex-direction: column; gap: 10px; padding: 0 10px; }
         .res-btn {
             text-decoration: none; color: #000; background: var(--neon-gold);
-            padding: 16px; font-size: 0.95rem; font-weight: bold; letter-spacing: 2px;
+            padding: 16px; font-size: 0.95rem; font-weight: bold; letter-spacing: 2px; text-align: center;
         }
         .res-btn-alt {
             text-decoration: none; color: var(--neon-gold); background: transparent;
-            border: 1px solid var(--neon-gold); padding: 14px; font-size: 0.85rem; letter-spacing: 2px;
+            border: 1px solid var(--neon-gold); padding: 14px; font-size: 0.85rem; letter-spacing: 2px; text-align: center;
         }
 
         .btn-close { margin-top: 35px; color: #555; cursor: pointer; font-size: 0.75rem; letter-spacing: 3px; }
@@ -107,7 +101,7 @@
             padding: 14px 70px; font-size: 0.95rem; font-weight: bold; letter-spacing: 6px; cursor: pointer;
         }
         .rolling { animation: blink 0.1s infinite; }
-        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
     </style>
 </head>
 <body>
@@ -135,56 +129,65 @@
             <div class="res-cat-tag" id="res-cat">[ SCANNING... ]</div>
             
             <div class="food-img-frame">
-                <div class="img-loader" id="img-status">影像同步中...</div>
+                <div class="img-loader" id="img-status">影像讀取中...</div>
                 <img id="food-pic" src="" alt="美食影像">
             </div>
 
             <div class="res-food-name" id="res-food">---</div>
             
             <div class="res-btn-group">
-                <a id="lnk-map" class="res-btn" target="_blank">📍 立即導航附近店家</a>
-                <a id="lnk-blog" class="res-btn-alt" target="_blank">📜 瀏覽專業食記</a>
+                <a id="lnk-map" class="res-btn" target="_blank">📍 立即導航</a>
+                <a id="lnk-blog" class="res-btn-alt" target="_blank">📜 瀏覽食記</a>
             </div>
         </div>
         <div class="btn-close" id="btn-close">[ CLOSE SCANNER ]</div>
     </div>
 
 <script>
+    // 1. 食物資料庫與對應英文關鍵字 (確保搜尋準確)
     const foodData = [
-        { cat: "街頭小吃", items: ["蚵仔煎", "臭豆腐", "地瓜球", "肉圓", "麵線", "雞排", "大腸包小腸"] },
-        { cat: "深夜宵夜", items: ["串燒", "麻辣燙", "東山鴨頭", "台式滷味", "鹹水雞", "熱炒", "鹹酥雞"] },
-        { cat: "日式料理", items: ["拉麵", "握壽司", "海鮮丼", "日式咖哩", "炸豬排", "烏龍麵", "天婦羅", "居酒屋"] },
-        { cat: "美式風格", items: ["手打漢堡", "炭烤牛排", "美式炸雞", "披薩", "熱狗堡", "燻烤肋排"] },
-        { cat: "韓式經典", items: ["韓式炸雞", "石鍋拌飯", "銅盤烤肉", "部隊鍋", "海鮮煎餅", "辣炒年糕"] },
-        { cat: "台式在地", items: ["牛肉麵", "滷肉飯", "排骨飯", "控肉飯", "石頭火鍋", "薑母鴨", "羊肉爐"] },
-        { cat: "東南亞風", items: ["泰式料理", "越南河粉", "肉骨茶", "打拋豬", "月亮蝦餅", "叻沙麵"] },
-        { cat: "港式點心", items: ["燒賣", "叉燒包", "腸粉", "菠蘿油", "干炒牛河", "燒臘拼盤"] },
-        { cat: "甜點冰品", items: ["芒果冰", "豆花", "燒仙草", "車輪餅", "雞蛋糕", "珍珠奶茶"] }
+        { cat: "日式料理", items: [
+            { name: "拉麵", en: "ramen" },
+            { name: "握壽司", en: "sushi" },
+            { name: "炸豬排", en: "tonkatsu" },
+            { name: "日式咖哩", en: "japanese curry" }
+        ]},
+        { cat: "美式風格", items: [
+            { name: "手打漢堡", en: "burger" },
+            { name: "美式炸雞", en: "fried chicken" },
+            { name: "披薩", en: "pizza" },
+            { name: "炭烤牛排", en: "steak" }
+        ]},
+        { cat: "韓式經典", items: [
+            { name: "韓式炸雞", en: "korean fried chicken" },
+            { name: "石鍋拌飯", en: "bibimbap" },
+            { name: "辣炒年糕", en: "teokbokki" }
+        ]},
+        { cat: "在地小吃", items: [
+            { name: "蚵仔煎", en: "oyster omelet" },
+            { name: "雞排", en: "taiwanese fried chicken" },
+            { name: "滷肉飯", en: "braised pork rice" }
+        ]}
     ];
-
-    // 建立一個圖庫映射，確保圖片品質 (這會解決訊號弱的問題)
-    const imgLibrary = {
-        "拉麵": "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=500&auto=format",
-        "握壽司": "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=500&auto=format",
-        "手打漢堡": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500&auto=format",
-        "雞排": "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=500&auto=format",
-        "牛肉麵": "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=500&auto=format",
-        "預設": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=500&auto=format"
-    };
 
     const btnRun = document.getElementById('btn-run');
     const manualGrid = document.getElementById('view-manual');
     const foodPic = document.getElementById('food-pic');
     const imgStatus = document.getElementById('img-status');
 
+    // 初始化手動分類
     foodData.forEach((data) => {
         const card = document.createElement('div');
         card.className = 'food-card';
         card.innerHTML = `<span class="label">${data.cat}</span>`;
-        card.onclick = () => showFinal(data.cat, data.items[Math.floor(Math.random() * data.items.length)]);
+        card.onclick = () => {
+            const item = data.items[Math.floor(Math.random() * data.items.length)];
+            showFinal(data.cat, item);
+        };
         manualGrid.appendChild(card);
     });
 
+    // 數位滾輪邏輯
     btnRun.onclick = () => {
         btnRun.disabled = true;
         const d1 = document.getElementById('d1');
@@ -199,49 +202,46 @@
                 clearInterval(timer);
                 d1.classList.remove('rolling'); d2.classList.remove('rolling');
                 const cat = foodData[Math.floor(Math.random() * foodData.length)];
-                showFinal(cat.cat, cat.items[Math.floor(Math.random() * cat.items.length)]);
+                const item = cat.items[Math.floor(Math.random() * cat.items.length)];
+                showFinal(cat.cat, item);
                 btnRun.disabled = false;
             }
         }, 60);
     };
 
-    function showFinal(cat, name) {
+    function showFinal(cat, item) {
         document.getElementById('overlay').style.display = 'flex';
         document.getElementById('res-cat').innerText = `[ ${cat} 模式 ]`;
-        document.getElementById('res-food').innerText = name;
+        document.getElementById('res-food').innerText = item.name;
         
-        // 圖片處理邏輯優化
-        foodPic.style.opacity = '0';
+        // 圖片處理
+        foodPic.style.display = 'none';
         imgStatus.style.display = 'block';
-        imgStatus.innerText = "影像同步中...";
+        imgStatus.innerText = "正在擷取影像...";
 
-        // 使用動態生成的美食關鍵字圖片 (Picsum 加強版)
-        const randomID = Math.floor(Math.random() * 50);
-        // 如果 imgLibrary 有精準圖片就用，沒有就用隨機高清美食圖
-        const photoUrl = imgLibrary[name] || `https://loremflickr.com/500/400/${encodeURIComponent(name + ",meal")}/all`;
+        // 核心修正：使用英文關鍵字確保搜尋到真實美食照片
+        // 加入隨機數避免瀏覽器快取同一張圖片
+        const cacheBuster = Math.floor(Math.random() * 1000);
+        const photoUrl = `https://loremflickr.com/500/400/${encodeURIComponent(item.en)}?lock=${cacheBuster}`;
         
         foodPic.src = photoUrl;
         
         foodPic.onload = () => {
             imgStatus.style.display = 'none';
-            foodPic.style.opacity = '1';
+            foodPic.style.display = 'block';
         };
         
         foodPic.onerror = () => {
-            foodPic.src = imgLibrary["預設"];
-            foodPic.style.opacity = '1';
-            imgStatus.style.display = 'none';
+            imgStatus.innerText = "影像讀取失敗";
         };
 
-        document.getElementById('lnk-map').href = "https://www.google.com/maps/search/" + encodeURIComponent(name + " 附近");
-        document.getElementById('lnk-blog').href = "https://www.google.com/search?q=" + encodeURIComponent(name + " 推薦食記 2026");
+        document.getElementById('lnk-map').href = "https://www.google.com/maps/search/" + encodeURIComponent(item.name);
+        document.getElementById('lnk-blog').href = "https://www.google.com/search?q=" + encodeURIComponent(item.name + " 推薦食記");
     }
 
-    document.getElementById('btn-close').onclick = () => {
-        document.getElementById('overlay').style.display = 'none';
-        foodPic.style.opacity = '0';
-    };
+    document.getElementById('btn-close').onclick = () => document.getElementById('overlay').style.display = 'none';
 
+    // 導覽切換
     document.getElementById('nav-auto').onclick = function() {
         this.classList.add('active'); document.getElementById('nav-manual').classList.remove('active');
         document.getElementById('view-auto').style.display = 'flex'; manualGrid.style.display = 'none'; btnRun.style.display = 'block';
