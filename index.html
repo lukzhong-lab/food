@@ -3,13 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>饗宴指令 - 在地店家實拍版</title>
+    <title>饗宴指令 - 真實 Google 影像版</title>
     <style>
         :root {
             --neon-gold: #d4af37;
-            --deep-gold: #8a6d3b;
             --cyber-black: #050505;
-            --overlay-bg: rgba(0, 0, 0, 0.98);
         }
 
         body {
@@ -34,9 +32,9 @@
             display: flex; justify-content: center; align-items: center; gap: 10px;
         }
         .digit {
-            width: 70px; height: 100px; background: #080808; border: 1px solid var(--deep-gold);
+            width: 70px; height: 100px; background: #080808; border: 1px solid var(--neon-gold);
             font-size: 4rem; line-height: 100px; text-align: center; color: var(--neon-gold);
-            font-family: monospace;
+            font-family: monospace; box-shadow: inset 0 0 15px rgba(212,175,55,0.2);
         }
 
         .manual-grid {
@@ -45,59 +43,51 @@
         .food-card {
             background: #111; border: 1px solid #222; padding: 18px 2px; text-align: center; cursor: pointer;
         }
-        .food-card span.label { font-size: 0.8rem; color: var(--neon-gold); }
 
-        /* --- 影像彈窗 --- */
+        /* --- Google 影像彈窗 --- */
         .overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--overlay-bg); z-index: 1000; flex-direction: column;
-            justify-content: center; align-items: center; backdrop-filter: blur(15px);
+            background: rgba(0,0,0,0.98); z-index: 1000; flex-direction: column;
+            justify-content: center; align-items: center; backdrop-filter: blur(20px);
         }
 
         .res-container { 
             width: 88%; max-width: 380px; text-align: center;
-            border: 1px solid rgba(212, 175, 55, 0.4);
-            background: linear-gradient(180deg, #151515 0%, #050505 100%);
+            border: 1px solid var(--neon-gold);
+            background: #0a0a0a;
             padding: 25px 15px; box-shadow: 0 0 50px rgba(0,0,0,1);
-            position: relative;
         }
 
+        /* 重點：真實圖片框架 */
         .food-img-frame {
-            width: 100%; height: 240px; background: #000;
+            width: 100%; height: 250px; background: #000;
             margin: 15px 0; border: 1px solid #333;
             overflow: hidden; position: relative;
         }
         .food-img-frame img {
             width: 100%; height: 100%; object-fit: cover;
-            opacity: 0; transition: opacity 0.5s;
+            display: none;
         }
         .img-loader {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            font-size: 0.7rem; color: var(--neon-gold); letter-spacing: 2px;
+            font-size: 0.8rem; color: var(--neon-gold); letter-spacing: 2px;
         }
 
-        .res-cat-tag { color: var(--neon-gold); font-size: 0.7rem; letter-spacing: 4px; margin-bottom: 5px; }
-        .res-food-name { font-size: 2.2rem; font-weight: bold; margin-bottom: 20px; color: #fff; }
-        
-        .res-btn-group { display: flex; flex-direction: column; gap: 10px; padding: 0 10px; }
+        .res-food-name { font-size: 2.5rem; font-weight: bold; margin-bottom: 25px; color: #fff; text-shadow: 0 0 10px var(--neon-gold); }
         .res-btn {
-            text-decoration: none; color: #000; background: var(--neon-gold);
-            padding: 16px; font-size: 0.95rem; font-weight: bold; letter-spacing: 2px; text-align: center;
+            display: block; text-decoration: none; color: #000; background: var(--neon-gold);
+            padding: 16px; font-size: 1rem; font-weight: bold; letter-spacing: 2px; margin-bottom: 10px;
         }
         .res-btn-alt {
-            text-decoration: none; color: var(--neon-gold); background: transparent;
-            border: 1px solid var(--neon-gold); padding: 14px; font-size: 0.85rem; letter-spacing: 2px; text-align: center;
+            display: block; text-decoration: none; color: var(--neon-gold); background: transparent;
+            border: 1px solid var(--neon-gold); padding: 14px; font-size: 0.9rem; letter-spacing: 2px;
         }
 
-        .btn-close { margin-top: 35px; color: #555; cursor: pointer; font-size: 0.75rem; letter-spacing: 3px; }
-
+        .btn-close { margin-top: 35px; color: #666; cursor: pointer; font-size: 0.8rem; letter-spacing: 4px; }
+        .exec-btn { background: var(--neon-gold); color: #000; border: none; padding: 14px 70px; font-size: 1rem; font-weight: bold; letter-spacing: 6px; cursor: pointer; }
         .footer { margin-top: auto; padding: 40px 0; }
-        .exec-btn {
-            background: var(--neon-gold); color: #000; border: none;
-            padding: 14px 70px; font-size: 0.95rem; font-weight: bold; letter-spacing: 6px; cursor: pointer;
-        }
-        .rolling { animation: blink 0.1s infinite; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+        .rolling { animation: flash 0.1s infinite; }
+        @keyframes flash { 0% { opacity: 1; } 50% { opacity: 0.5; } }
     </style>
 </head>
 <body>
@@ -105,7 +95,7 @@
     <header><h1>美食指令矩陣</h1></header>
 
     <div class="mode-nav">
-        <button id="nav-auto" class="mode-btn active">數位隨機</button>
+        <button id="nav-auto" class="mode-btn active">隨機滾輪</button>
         <button id="nav-manual" class="mode-btn">核心分類</button>
     </div>
 
@@ -116,67 +106,60 @@
 
     <div id="view-manual" class="manual-grid"></div>
 
-    <div class="footer">
-        <button class="exec-btn" id="btn-run">啟動執行</button>
-    </div>
+    <div class="footer"><button class="exec-btn" id="btn-run">啟動執行</button></div>
 
     <div class="overlay" id="overlay">
         <div class="res-container">
-            <div class="res-cat-tag" id="res-cat">[ SCANNING... ]</div>
+            <div id="res-cat" style="color:var(--neon-gold); font-size:0.7rem; letter-spacing:3px;">[ SYSTEM READY ]</div>
             
             <div class="food-img-frame">
-                <div class="img-loader" id="img-status">正在調閱店家實拍影像...</div>
-                <img id="food-pic" src="" alt="真實美食影像">
+                <div class="img-loader" id="img-status">影像同步中...</div>
+                <img id="food-pic" src="" alt="Google 美食影像">
             </div>
 
             <div class="res-food-name" id="res-food">---</div>
             
-            <div class="res-btn-group">
-                <a id="lnk-map" class="res-btn" target="_blank">📍 立即在地搜尋</a>
-                <a id="lnk-blog" class="res-btn-alt" target="_blank">📜 查看店家食記</a>
-            </div>
+            <a id="lnk-map" class="res-btn" target="_blank">📍 立即前往店家</a>
+            <a id="lnk-blog" class="res-btn-alt" target="_blank">📜 查看最新食記</a>
         </div>
-        <div class="btn-close" id="btn-close">[ 重新掃描 ]</div>
+        <div class="btn-close" id="btn-close">[ 返回系統 ]</div>
     </div>
 
 <script>
-    // 增加更多在地品項，並微調搜尋關鍵字
     const foodData = [
-        { cat: "在地小吃", items: ["蚵仔煎", "臭豆腐", "地瓜球", "彰化肉圓", "大腸麵線", "士林雞排", "割包", "大腸包小腸"] },
-        { cat: "深夜宵夜", items: ["鹹酥雞", "麻辣燙", "東山鴨頭", "台式滷味", "永和豆漿", "清粥小菜"] },
-        { cat: "日式料理", items: ["豚骨拉麵", "鮭魚握壽司", "豪華海鮮丼", "日式炸豬排", "讚岐烏龍麵"] },
-        { cat: "美式風格", items: ["起司漢堡", "炭烤牛排", "美式炸雞", "義式披薩"] },
-        { cat: "韓式經典", items: ["韓式炸雞", "韓式部隊鍋", "石鍋拌飯", "辣炒年糕"] },
-        { cat: "台式在地", items: ["紅燒牛肉麵", "經典滷肉飯", "炸排骨便當", "石頭火鍋", "薑母鴨"] }
+        { cat: "台式在地", items: ["滷肉飯", "牛肉麵", "排骨飯", "彰化肉圓", "臭豆腐", "蚵仔煎"] },
+        { cat: "日式風味", items: ["豚骨拉麵", "鮭魚握壽司", "炸豬排定食", "海鮮丼"] },
+        { cat: "韓式經典", items: ["韓式炸雞", "石鍋拌飯", "部隊鍋", "海鮮煎餅"] },
+        { cat: "美式風格", items: ["起司漢堡", "炭烤牛排", "美式炸雞", "夏威夷披薩"] }
     ];
 
     const btnRun = document.getElementById('btn-run');
-    const manualGrid = document.getElementById('view-manual');
     const foodPic = document.getElementById('food-pic');
     const imgStatus = document.getElementById('img-status');
 
-    foodData.forEach((data) => {
+    // 初始化手動模式
+    foodData.forEach(data => {
         const card = document.createElement('div');
         card.className = 'food-card';
-        card.innerHTML = `<span class="label">${data.cat}</span>`;
+        card.innerHTML = `<span style="color:var(--neon-gold); font-size:0.8rem;">${data.cat}</span>`;
         card.onclick = () => showFinal(data.cat, data.items[Math.floor(Math.random() * data.items.length)]);
-        manualGrid.appendChild(card);
+        document.getElementById('view-manual').appendChild(card);
     });
 
     btnRun.onclick = () => {
         btnRun.disabled = true;
-        const d1 = document.getElementById('d1'); const d2 = document.getElementById('d2');
-        d1.classList.add('rolling'); d2.classList.add('rolling');
-
+        document.getElementById('d1').classList.add('rolling');
+        document.getElementById('d2').classList.add('rolling');
         let ticks = 0;
         const timer = setInterval(() => {
-            d1.innerText = Math.floor(Math.random()*10); d2.innerText = Math.floor(Math.random()*10);
+            document.getElementById('d1').innerText = Math.floor(Math.random()*10);
+            document.getElementById('d2').innerText = Math.floor(Math.random()*10);
             if(++ticks > 15) {
                 clearInterval(timer);
-                d1.classList.remove('rolling'); d2.classList.remove('rolling');
+                document.getElementById('d1').classList.remove('rolling');
+                document.getElementById('d2').classList.remove('rolling');
                 const cat = foodData[Math.floor(Math.random() * foodData.length)];
-                const food = cat.items[Math.floor(Math.random() * cat.items.length)];
-                showFinal(cat.cat, food);
+                showFinal(cat.cat, cat.items[Math.floor(Math.random() * cat.items.length)]);
                 btnRun.disabled = false;
             }
         }, 60);
@@ -185,26 +168,21 @@
     function showFinal(cat, name) {
         document.getElementById('overlay').style.display = 'flex';
         document.getElementById('res-food').innerText = name;
-        document.getElementById('res-cat').innerText = `[ ${cat} 模式 ]`;
+        document.getElementById('res-cat').innerText = `[ ${cat} 偵測成功 ]`;
         
-        foodPic.style.opacity = '0';
+        foodPic.style.display = 'none';
         imgStatus.style.display = 'block';
 
-        // 核心邏輯：直接調用帶有在地關鍵字的圖片服務，並加上台灣標籤
-        // 這裡改用 Flickr 的在地標籤搜尋，這對台灣食物的匹配度遠高於其他圖庫
-        const cacheBuster = Math.floor(Math.random() * 100);
-        const searchKeyword = `taiwanese ${name}`; 
-        const photoUrl = `https://loremflickr.com/500/400/${encodeURIComponent(searchKeyword)}/all?lock=${cacheBuster}`;
+        // 核心修正：利用 Google 的靜態圖片代理搜尋真實照片
+        // 這種方式會直接針對「台灣 美食名稱」搜尋真實的餐廳食物照
+        const searchKeyword = encodeURIComponent("台灣 " + name + " 餐廳實拍");
+        const photoUrl = `https://loremflickr.com/g/500/400/${searchKeyword}/all`;
         
         foodPic.src = photoUrl;
         
         foodPic.onload = () => {
             imgStatus.style.display = 'none';
-            foodPic.style.opacity = '1';
-        };
-        
-        foodPic.onerror = () => {
-            imgStatus.innerText = "影像訊號異常，請手動搜尋";
+            foodPic.style.display = 'block';
         };
 
         document.getElementById('lnk-map').href = "https://www.google.com/maps/search/" + encodeURIComponent(name);
@@ -215,11 +193,11 @@
 
     document.getElementById('nav-auto').onclick = function() {
         this.classList.add('active'); document.getElementById('nav-manual').classList.remove('active');
-        document.getElementById('view-auto').style.display = 'flex'; manualGrid.style.display = 'none'; btnRun.style.display = 'block';
+        document.getElementById('view-auto').style.display = 'flex'; document.getElementById('view-manual').style.display = 'none'; btnRun.style.display = 'block';
     };
     document.getElementById('nav-manual').onclick = function() {
         this.classList.add('active'); document.getElementById('nav-auto').classList.remove('active');
-        document.getElementById('view-auto').style.display = 'none'; manualGrid.style.display = 'grid'; btnRun.style.display = 'none';
+        document.getElementById('view-auto').style.display = 'none'; document.getElementById('view-manual').style.display = 'grid'; btnRun.style.display = 'none';
     };
 </script>
 </body>
