@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>饗宴指令 - 功能全回歸版</title>
+    <title>饗宴指令 - 台灣美食全分類版</title>
     <style>
         :root {
             --neon-gold: #d4af37;
@@ -17,38 +17,37 @@
             min-height: 100vh;
         }
 
-        header { margin: 30px 0; text-align: center; }
-        header h1 { font-size: 1.2rem; letter-spacing: 10px; color: var(--neon-gold); margin: 0; }
+        header { margin: 20px 0; text-align: center; }
+        header h1 { font-size: 1.1rem; letter-spacing: 8px; color: var(--neon-gold); margin: 0; }
         
-        .mode-nav { display: flex; gap: 10px; margin-bottom: 25px; }
+        .mode-nav { display: flex; gap: 5px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center; }
         .mode-btn {
-            background: none; border: 1px solid #333; color: #666; padding: 10px 20px;
-            border-radius: 2px; cursor: pointer; font-size: 0.9rem;
+            background: none; border: 1px solid #333; color: #666; padding: 8px 12px;
+            border-radius: 2px; cursor: pointer; font-size: 0.8rem;
         }
         .mode-btn.active { border-color: var(--neon-gold); color: var(--neon-gold); }
 
-        /* 隨機滾輪區 */
         .clock-box {
-            width: 310px; height: 160px; background: #000; border: 1px solid #222;
+            width: 310px; height: 120px; background: #000; border: 1px solid #222;
             display: flex; justify-content: center; align-items: center; gap: 10px;
+            margin-bottom: 20px;
         }
         .digit {
-            width: 70px; height: 110px; background: #080808; border: 1px solid var(--neon-gold);
-            font-size: 4.5rem; line-height: 110px; text-align: center; color: var(--neon-gold);
+            width: 60px; height: 85px; background: #080808; border: 1px solid var(--neon-gold);
+            font-size: 3.5rem; line-height: 85px; text-align: center; color: var(--neon-gold);
             font-family: monospace;
         }
 
-        /* 手動分類網格 - 隨機點選功能 */
+        /* 分類隨機網格 (極大化) */
         .manual-grid {
-            display: none; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 90%; max-width: 400px;
+            display: none; grid-template-columns: repeat(2, 1fr); gap: 8px; width: 95%; max-width: 450px; padding-bottom: 30px;
         }
         .category-card {
-            background: #111; border: 1px solid #222; padding: 25px 10px; text-align: center; cursor: pointer;
-            transition: 0.2s;
+            background: #111; border: 1px solid #222; padding: 15px 5px; text-align: center; cursor: pointer;
         }
         .category-card:active { border-color: var(--neon-gold); background: #1a1a1a; }
-        .cat-name { color: var(--neon-gold); font-size: 1rem; font-weight: bold; }
-        .cat-desc { color: #555; font-size: 0.7rem; margin-top: 5px; }
+        .cat-name { color: var(--neon-gold); font-size: 0.9rem; font-weight: bold; }
+        .cat-count { color: #555; font-size: 0.65rem; margin-top: 4px; }
 
         /* 結果彈窗 */
         .overlay {
@@ -57,32 +56,32 @@
             justify-content: center; align-items: center; backdrop-filter: blur(10px);
         }
         .res-container { 
-            width: 85%; max-width: 380px; text-align: center;
-            border: 1px solid var(--neon-gold); background: #0a0a0a; padding: 40px 20px;
+            width: 85%; max-width: 360px; text-align: center;
+            border: 1px solid var(--neon-gold); background: #0a0a0a; padding: 30px 15px;
         }
-        .res-food-name { font-size: 3rem; font-weight: 900; margin: 30px 0; color: #fff; text-shadow: 0 0 15px var(--neon-gold); }
+        .res-food-name { font-size: 2.5rem; font-weight: 900; margin: 20px 0; color: #fff; text-shadow: 0 0 10px var(--neon-gold); }
         
-        .btn-group { display: flex; flex-direction: column; gap: 12px; }
+        .btn-group { display: flex; flex-direction: column; gap: 10px; }
         .res-btn {
             text-decoration: none; color: #000; background: var(--neon-gold);
-            padding: 16px; font-size: 1rem; font-weight: bold; letter-spacing: 2px; text-align: center;
+            padding: 14px; font-size: 0.95rem; font-weight: bold; text-align: center;
         }
         .res-btn-alt {
             text-decoration: none; color: var(--neon-gold); background: transparent;
-            border: 1px solid var(--neon-gold); padding: 14px; font-size: 0.9rem; text-align: center;
+            border: 1px solid var(--neon-gold); padding: 12px; font-size: 0.85rem; text-align: center;
         }
 
-        .btn-close { margin-top: 40px; color: #444; cursor: pointer; font-size: 0.8rem; letter-spacing: 4px; }
-        .footer { margin-top: auto; padding: 40px 0; }
-        .exec-btn { background: var(--neon-gold); color: #000; border: none; padding: 15px 80px; font-size: 1.1rem; font-weight: bold; letter-spacing: 8px; cursor: pointer; }
+        .btn-close { margin-top: 30px; color: #444; cursor: pointer; font-size: 0.8rem; letter-spacing: 3px; }
+        .footer { margin-top: auto; padding: 25px 0; }
+        .exec-btn { background: var(--neon-gold); color: #000; border: none; padding: 14px 60px; font-size: 1rem; font-weight: bold; letter-spacing: 6px; cursor: pointer; }
         
         .rolling { animation: blink 0.1s infinite; }
-        @keyframes blink { 50% { opacity: 0.4; } }
+        @keyframes blink { 50% { opacity: 0.3; } }
     </style>
 </head>
 <body>
 
-    <header><h1>饗宴指令系統</h1></header>
+    <header><h1>饗宴指令：全領域矩陣</h1></header>
 
     <div class="mode-nav">
         <button id="nav-auto" class="mode-btn active">全域隨機</button>
@@ -102,35 +101,41 @@
 
     <div class="overlay" id="overlay">
         <div class="res-container">
-            <div id="res-tag" style="color:var(--neon-gold); font-size:0.8rem; letter-spacing:3px;">[ 最終決定 ]</div>
+            <div id="res-tag" style="color:var(--neon-gold); font-size:0.7rem;">[ 指令解碼成功 ]</div>
             <div class="res-food-name" id="res-food">---</div>
-            
             <div class="btn-group">
                 <a id="lnk-map" class="res-btn" target="_blank">📍 搜尋附近店家</a>
-                <a id="lnk-blog" class="res-btn-alt" target="_blank">📜 查看專業食記</a>
+                <a id="lnk-blog" class="res-btn-alt" target="_blank">📜 查看最新食記</a>
             </div>
         </div>
-        <div class="btn-close" id="btn-close">[ CLOSE ]</div>
+        <div class="btn-close" id="btn-close">[ 重新掃描 ]</div>
     </div>
 
 <script>
+    // 依據台灣 Google 搜尋熱度與國家分類之資料庫
     const foodData = [
-        { cat: "台式在地", items: ["滷肉飯", "牛肉麵", "排骨飯", "彰化肉圓", "臭豆腐", "蚵仔煎", "雞排", "鹹酥雞"] },
-        { cat: "日式料理", items: ["拉麵", "握壽司", "炸豬排定食", "海鮮丼", "烏龍麵", "日式咖哩"] },
-        { cat: "韓式美式", items: ["韓式炸雞", "石鍋拌飯", "部隊鍋", "起司漢堡", "炭烤牛排", "披薩"] },
-        { cat: "街頭宵夜", items: ["大腸包小腸", "地瓜球", "麻辣燙", "永和豆漿", "清粥小菜", "東山鴨頭"] }
+        { cat: "台式在地經典", items: ["滷肉飯", "牛肉麵", "排骨飯", "控肉飯", "雞肉飯", "鵝肉", "擔仔麵", "台式熱炒", "石頭火鍋", "薑母鴨", "羊肉爐", "白斬雞"] },
+        { cat: "日式職人料理", items: ["豚骨拉麵", "握壽司", "豪華海鮮丼", "炸豬排定食", "讚岐烏龍麵", "日式咖哩", "天婦羅", "親子丼", "串燒居酒屋", "廣島燒"] },
+        { cat: "韓式潮流美食", items: ["韓式炸雞", "石鍋拌飯", "部隊鍋", "韓式烤肉", "辣炒年糕", "海鮮煎餅", "人蔘雞湯", "韓式雜菜", "炸醬麵"] },
+        { cat: "泰式酸辣風味", items: ["月亮蝦餅", "打拋豬", "泰式檸檬魚", "冬蔭功酸辣湯", "綠咖哩雞", "涼拌海鮮", "泰式炒河粉", "蝦醬空心菜"] },
+        { cat: "美式粗曠風格", items: ["雙層起司漢堡", "炭烤牛排", "美式炸雞桶", "德州燻肉", "水牛城辣雞翅", "美式熱狗堡", "烤肋排"] },
+        { cat: "義式浪漫經典", items: ["奶油培根義大利麵", "拿坡里披薩", "青醬海鮮麵", "義式燉飯", "千層麵", "瑪格麗特披薩"] },
+        { cat: "港式點心茶飲", items: ["燒賣", "蝦餃", "干炒牛河", "菠蘿油", "冰火菠蘿", "臘味飯", "腸粉", "腐皮捲", "絲襪奶茶"] },
+        { cat: "南洋東南亞", items: ["新加坡海南雞飯", "越式河粉", "印尼炒麵", "肉骨茶", "沙嗲串燒", "越式法國麵包", "馬來西亞叻沙"] },
+        { cat: "夜市街頭小吃", items: ["蚵仔煎", "大腸麵線", "臭豆腐", "彰化肉圓", "割包", "雞排", "地瓜球", "大腸包小腸", "潤餅", "甜不辣"] },
+        { cat: "深夜宵夜限定", items: ["鹹酥雞", "麻辣燙", "東山鴨頭", "永和豆漿", "滷味", "清粥小菜", "涼麵", "鹹水雞", "烤香腸"] }
     ];
 
     const btnRun = document.getElementById('btn-run');
     const viewManual = document.getElementById('view-manual');
 
-    // 生成分類按鈕：點擊分類後「手動隨機」抽取該分類項
+    // 初始化手動分類隨機功能
     foodData.forEach(data => {
         const card = document.createElement('div');
         card.className = 'category-card';
         card.innerHTML = `
             <div class="cat-name">${data.cat}</div>
-            <div class="cat-desc">隨機抽取 ${data.items.length} 項</div>
+            <div class="cat-count">${data.items.length} 款選項</div>
         `;
         card.onclick = () => {
             const randomItem = data.items[Math.floor(Math.random() * data.items.length)];
@@ -139,12 +144,11 @@
         viewManual.appendChild(card);
     });
 
-    // 全域隨機按鈕
+    // 啟動全域隨機
     btnRun.onclick = () => {
         btnRun.disabled = true;
         const d1 = document.getElementById('d1'); const d2 = document.getElementById('d2');
         d1.classList.add('rolling'); d2.classList.add('rolling');
-        
         let ticks = 0;
         const timer = setInterval(() => {
             d1.innerText = Math.floor(Math.random()*10);
@@ -162,17 +166,16 @@
 
     function showResult(cat, name) {
         document.getElementById('overlay').style.display = 'flex';
-        document.getElementById('res-tag').innerText = `[ ${cat} 偵測成功 ]`;
+        document.getElementById('res-tag').innerText = `[ ${cat} 模式 ]`;
         document.getElementById('res-food').innerText = name;
         
-        // 恢復功能性連結
+        // Google 搜尋連結優化
         document.getElementById('lnk-map').href = `https://www.google.com/maps/search/${encodeURIComponent(name)}`;
-        document.getElementById('lnk-blog').href = `https://www.google.com/search?q=${encodeURIComponent(name + " 推薦食記")}`;
+        document.getElementById('lnk-blog').href = `https://www.google.com/search?q=${encodeURIComponent(name + " 推薦食記 2026")}`;
     }
 
     document.getElementById('btn-close').onclick = () => document.getElementById('overlay').style.display = 'none';
 
-    // 模式切換邏輯
     document.getElementById('nav-auto').onclick = function() {
         this.classList.add('active'); document.getElementById('nav-manual').classList.remove('active');
         document.getElementById('view-auto').style.display = 'flex'; viewManual.style.display = 'none'; btnRun.style.display = 'block';
