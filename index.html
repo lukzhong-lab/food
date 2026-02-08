@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>饗宴矩陣 - 3x4 終極版</title>
+    <title>饗宴矩陣 - 評論回歸旗艦版</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -17,19 +17,18 @@
             margin: 0; background: var(--dark); color: #e0e0e0;
             font-family: 'Noto Sans TC', sans-serif;
             display: flex; flex-direction: column; align-items: center;
-            overflow: hidden; /* 防止滑動，達成一屏全覽 */
-            height: 100vh;
+            overflow: hidden; height: 100vh;
         }
 
         /* 頂部中控台 */
         .control-panel {
-            width: 100%; max-width: 500px; padding: 15px 0;
+            width: 100%; max-width: 500px; padding: 12px 0;
             background: linear-gradient(180deg, #111 0%, transparent 100%);
             border-bottom: 1px solid var(--border);
         }
 
         .display-screen {
-            width: 90%; margin: 0 auto; height: 80px;
+            width: 90%; margin: 0 auto; height: 75px;
             background: #000; border: 1px solid var(--gold); border-radius: 12px;
             display: flex; justify-content: center; align-items: center;
             box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
@@ -37,12 +36,12 @@
 
         #rolling-text {
             font-family: 'Share Tech Mono', monospace;
-            font-size: 1.5rem; font-weight: bold; color: var(--gold);
+            font-size: 1.4rem; font-weight: bold; color: var(--gold);
             text-shadow: 0 0 8px var(--gold); text-align: center;
         }
 
         .input-bar {
-            width: 90%; margin: 10px auto 0; display: flex; gap: 5px;
+            width: 90%; margin: 8px auto 0; display: flex; gap: 5px;
         }
 
         input[type="text"] {
@@ -50,33 +49,18 @@
             color: #fff; padding: 10px; border-radius: 8px; font-size: 0.9rem;
         }
 
-        .exe-btn {
-            background: var(--gold); border: none; padding: 0 12px;
-            border-radius: 8px; font-weight: 900; cursor: pointer;
-        }
+        .exe-btn { background: var(--gold); border: none; padding: 0 12px; border-radius: 8px; font-weight: 900; cursor: pointer; }
 
-        /* 3x4 網格框架 */
+        /* 3x4 網格 */
         .matrix-grid {
-            display: grid; 
-            grid-template-columns: repeat(3, 1fr); /* 橫向 3格 */
-            grid-template-rows: repeat(4, 1fr);    /* 縱向 4格 */
-            gap: 8px;
-            width: 94%; 
-            max-width: 500px; 
-            flex-grow: 1; /* 自動填滿剩餘空間 */
-            padding: 15px 0 100px; /* 留位置給底部按鈕 */
+            display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(4, 1fr);
+            gap: 8px; width: 94%; max-width: 500px; flex-grow: 1; padding: 15px 0 110px;
         }
 
         .matrix-card {
-            background: var(--glass); 
-            border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 12px; 
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            transition: 0.2s;
-            position: relative;
+            background: var(--glass); border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 12px; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; transition: 0.2s; position: relative;
         }
 
         .matrix-card::before {
@@ -85,17 +69,14 @@
         }
 
         .matrix-card:active { transform: scale(0.92); background: rgba(255,255,255,0.1); }
+        .m-emoji { font-size: 1.5rem; margin-bottom: 2px; }
+        .m-title { font-weight: 900; font-size: 0.72rem; color: #ccc; }
 
-        .m-emoji { font-size: 1.6rem; margin-bottom: 4px; }
-        .m-title { font-weight: 900; font-size: 0.75rem; color: #ccc; }
-
-        /* 色彩定義 */
-        .brk { --accent: #00ff88; } .bento { --accent: #ff9f43; }
-        .jp { --accent: #3498db; } .kr { --accent: #a29bfe; }
-        .hk { --accent: #1abc9c; } .we { --accent: #ff5e57; }
-        .tw { --accent: #e67e22; } .st { --accent: #f1c40f; }
-        .drink { --accent: #00d2ff; } .sweet { --accent: #ff9a9e; }
-        .ff { --accent: #ff4757; } .sea { --accent: #27ae60; }
+        /* 分類色彩 */
+        .brk { --accent: #00ff88; } .bento { --accent: #ff9f43; } .jp { --accent: #3498db; }
+        .kr { --accent: #a29bfe; } .hk { --accent: #1abc9c; } .we { --accent: #ff5e57; }
+        .tw { --accent: #e67e22; } .st { --accent: #f1c40f; } .drink { --accent: #00d2ff; }
+        .sweet { --accent: #ff9a9e; } .ff { --accent: #ff4757; } .sea { --accent: #27ae60; }
 
         /* 結果彈窗 */
         .modal {
@@ -105,30 +86,21 @@
         }
 
         .modal-content {
-            width: 80%; max-width: 350px; text-align: center;
-            border: 1px solid var(--gold); padding: 30px 20px; border-radius: 25px;
-            background: #000;
+            width: 82%; max-width: 350px; text-align: center;
+            border: 1px solid var(--gold); padding: 30px 20px; border-radius: 25px; background: #000;
         }
 
         .res-name { font-size: 2.2rem; font-weight: 900; margin: 20px 0; color: #fff; text-shadow: 0 0 15px var(--gold); }
 
-        .action-btn {
-            background: var(--gold); color: #000; text-decoration: none; padding: 15px; 
-            border-radius: 50px; font-weight: 900; display: block; margin-bottom: 10px;
-        }
+        .action-btn { background: var(--gold); color: #000; text-decoration: none; padding: 15px; border-radius: 50px; font-weight: 900; display: block; margin-bottom: 12px; }
+        .sub-btn { color: var(--gold); text-decoration: none; padding: 12px; border: 1px solid var(--gold); border-radius: 50px; display: block; font-size: 0.85rem; font-weight: bold; }
 
         .footer-action {
-            position: fixed; bottom: 0; width: 100%; padding: 20px 0;
-            background: linear-gradient(0deg, #000 80%, transparent);
-            display: flex; justify-content: center; z-index: 200;
+            position: fixed; bottom: 0; width: 100%; padding: 25px 0;
+            background: linear-gradient(0deg, #000 85%, transparent); display: flex; justify-content: center; z-index: 200;
         }
 
-        .mega-btn {
-            background: linear-gradient(135deg, var(--gold) 0%, #f2d06b 100%);
-            color: #000; border: none; padding: 15px 60px; 
-            font-size: 1.1rem; font-weight: 900; border-radius: 50px; cursor: pointer;
-        }
-
+        .mega-btn { background: linear-gradient(135deg, var(--gold) 0%, #f2d06b 100%); color: #000; border: none; padding: 15px 70px; font-size: 1.1rem; font-weight: 900; border-radius: 50px; cursor: pointer; }
         .rolling { animation: flash 0.15s infinite; }
         @keyframes flash { 50% { opacity: 0.3; } }
     </style>
@@ -156,12 +128,12 @@
         <div style="color:var(--gold); font-size:0.7rem;">[ 系統解析完成 ]</div>
         <div class="res-name" id="res-name">---</div>
         <a id="lnk-map" class="action-btn" target="_blank">📍 搜尋店家</a>
-        <div id="btn-close" style="color:#555; margin-top:20px; cursor:pointer; font-size:0.8rem;">[ 返回主頁 ]</div>
+        <a id="lnk-blog" class="sub-btn" target="_blank">📜 查看食記推薦</a>
+        <div id="btn-close" style="color:#555; margin-top:25px; cursor:pointer; font-size:0.8rem;">[ 返回主頁 ]</div>
     </div>
 </div>
 
 <script>
-    // 核心數據 (350+ 項完整保留)
     const db = [
         { cat: "晨曦早點", icon: "☀️", style: "brk", items: ["蛋餅", "厚培根漢堡", "大冰奶", "燒餅夾蛋", "飯糰", "法式吐司", "早午餐拼盤", "蘿蔔糕加蛋"] },
         { cat: "職人便當", icon: "🍱", style: "bento", items: ["雞腿便當", "滷排骨便當", "三寶飯", "池上木盒便當", "焢肉飯", "舒肥健身餐", "鯖魚定食"] },
@@ -217,6 +189,7 @@
             document.getElementById('modal').style.display = 'flex';
             document.getElementById('res-name').innerText = res;
             document.getElementById('lnk-map').href = `https://www.google.com/maps/search/${encodeURIComponent(res)}`;
+            document.getElementById('lnk-blog').href = `https://www.google.com/search?q=${encodeURIComponent(res + " 推薦食記")}`;
         }, 500);
     }
 
