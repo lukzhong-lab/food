@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>饗宴矩陣 - 經典旗艦版</title>
+    <title>饗宴矩陣 - 全能優化版</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -20,15 +20,15 @@
             overflow: hidden; height: 100vh;
         }
 
-        /* 頂部中控台 */
+        /* 頂部中控台 - 縮減高度以相容輸入框 */
         .control-panel {
-            width: 100%; max-width: 500px; padding: 12px 0;
+            width: 100%; max-width: 500px; padding: 10px 0;
             background: linear-gradient(180deg, #111 0%, transparent 100%);
             border-bottom: 1px solid var(--border);
         }
 
         .display-screen {
-            width: 90%; margin: 0 auto; height: 75px;
+            width: 90%; margin: 0 auto; height: 60px;
             background: #000; border: 1px solid var(--gold); border-radius: 12px;
             display: flex; justify-content: center; align-items: center;
             box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
@@ -36,8 +36,25 @@
 
         #rolling-text {
             font-family: 'Share Tech Mono', monospace;
-            font-size: 1.4rem; font-weight: bold; color: var(--gold);
+            font-size: 1.3rem; font-weight: bold; color: var(--gold);
             text-shadow: 0 0 8px var(--gold); text-align: center;
+        }
+
+        /* 手動搜尋框回歸 */
+        .input-bar {
+            width: 90%; margin: 10px auto 0; display: flex; gap: 5px;
+        }
+
+        input[type="text"] {
+            flex: 1; background: rgba(255,255,255,0.05); border: 1px solid #333;
+            color: #fff; padding: 10px 15px; border-radius: 50px; font-size: 0.85rem;
+            outline: none; transition: 0.3s;
+        }
+        input[type="text"]:focus { border-color: var(--gold); background: rgba(255,255,255,0.1); }
+
+        .exe-btn {
+            background: var(--gold); border: none; padding: 0 15px;
+            border-radius: 50px; font-weight: 900; cursor: pointer; color: #000;
         }
 
         /* 3x4 網格佈局 */
@@ -58,16 +75,16 @@
         }
 
         .matrix-card:active { transform: scale(0.92); background: rgba(255,255,255,0.1); }
-        .m-emoji { font-size: 1.5rem; margin-bottom: 2px; }
-        .m-title { font-weight: 900; font-size: 0.72rem; color: #ccc; }
+        .m-emoji { font-size: 1.4rem; margin-bottom: 2px; }
+        .m-title { font-weight: 900; font-size: 0.7rem; color: #ccc; }
 
-        /* 分類色彩定義 */
+        /* 分類色彩 */
         .brk { --accent: #00ff88; } .bento { --accent: #ff9f43; } .jp { --accent: #3498db; }
         .kr { --accent: #a29bfe; } .hk { --accent: #1abc9c; } .we { --accent: #ff5e57; }
         .tw { --accent: #e67e22; } .st { --accent: #f1c40f; } .drink { --accent: #00d2ff; }
         .sweet { --accent: #ff9a9e; } .ff { --accent: #ff4757; } .sea { --accent: #27ae60; }
 
-        /* 結果彈窗 */
+        /* 彈窗樣式 */
         .modal {
             display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95);
             z-index: 1000; flex-direction: column; justify-content: center; align-items: center;
@@ -100,6 +117,10 @@
     <div class="display-screen">
         <div id="rolling-text">READY_TO_SCAN</div>
     </div>
+    <div class="input-bar">
+        <input type="text" id="custom-in" placeholder="輸入美食關鍵字 (如: 火鍋)...">
+        <button class="exe-btn" id="btn-exe">啟動</button>
+    </div>
 </div>
 
 <div class="matrix-grid" id="grid"></div>
@@ -110,28 +131,28 @@
 
 <div class="modal" id="modal">
     <div class="modal-content">
-        <div style="color:var(--gold); font-size:0.7rem;">[ 系統解析完成 ]</div>
+        <div style="color:var(--gold); font-size:0.7rem; letter-spacing: 2px;">[ 掃描完成 ]</div>
         <div class="res-name" id="res-name">---</div>
-        <a id="lnk-map" class="action-btn" target="_blank">📍 搜尋附近店家</a>
-        <a id="lnk-blog" class="sub-btn" target="_blank">📜 查看食記推薦</a>
-        <div id="btn-close" style="color:#555; margin-top:25px; cursor:pointer; font-size:0.8rem;">[ 返回主頁 ]</div>
+        <a id="lnk-map" class="action-btn" target="_blank">📍 尋找附近店家</a>
+        <a id="lnk-blog" class="sub-btn" target="_blank">📜 查看部落客食記</a>
+        <div id="btn-close" style="color:#555; margin-top:25px; cursor:pointer; font-size:0.8rem;">[ 返回矩陣 ]</div>
     </div>
 </div>
 
 <script>
     const db = [
-        { cat: "晨曦早點", icon: "☀️", style: "brk", items: ["蛋餅", "厚培根漢堡", "大冰奶", "燒餅夾蛋", "飯糰", "法式吐司", "早午餐拼盤", "蘿蔔糕加蛋"] },
-        { cat: "職人便當", icon: "🍱", style: "bento", items: ["雞腿便當", "滷排骨便當", "三寶飯", "池上木盒便當", "焢肉飯", "舒肥健身餐", "鯖魚定食"] },
+        { cat: "晨曦早點", icon: "☀️", style: "brk", items: ["蛋餅", "厚培根漢堡", "大冰奶", "燒餅夾蛋", "飯糰", "法式吐司", "早午餐拼盤", "蘿蔔糕"] },
+        { cat: "職人便當", icon: "🍱", style: "bento", items: ["雞腿便當", "滷排骨便當", "三寶飯", "木盒便當", "焢肉飯", "健身餐", "鯖魚定食"] },
         { cat: "日式職人", icon: "🍣", style: "jp", items: ["生魚片", "迴轉壽司", "拉麵", "沾麵", "炸豬排", "章魚小丸子", "和牛燒肉", "鰻魚飯"] },
-        { cat: "韓式潮流", icon: "🇰🇷", style: "kr", items: ["韓式炸雞", "石鍋拌飯", "韓式烤肉", "部隊鍋", "辣炒年糕", "海鮮煎餅", "馬鈴薯排骨湯"] },
-        { cat: "港式茶點", icon: "🥟", style: "hk", items: ["蝦餃燒賣", "干炒牛河", "菠蘿油", "腸粉", "燒臘飯", "西多士", "流沙包", "凍檸茶"] },
+        { cat: "韓式潮流", icon: "🇰🇷", style: "kr", items: ["韓式炸雞", "石鍋拌飯", "韓式烤肉", "部隊鍋", "辣炒年糕", "海鮮煎餅", "炸醬麵"] },
+        { cat: "港式茶點", icon: "🥟", style: "hk", items: ["蝦餃燒賣", "干炒牛河", "菠蘿油", "腸粉", "燒臘飯", "西多士", "流沙包"] },
         { cat: "美義風味", icon: "🍕", style: "we", items: ["牛肉漢堡", "牛排", "義大利麵", "披薩", "燉飯", "烤肋排", "炸雞翅"] },
         { cat: "台式熱炒", icon: "🔥", style: "tw", items: ["鳳梨蝦球", "客家小炒", "薑絲大腸", "蔥爆牛肉", "三杯雞", "五更腸旺", "宮保雞丁"] },
-        { cat: "街邊小吃", icon: "🍢", style: "st", items: ["地瓜球", "大腸包小腸", "蚵仔煎", "臭豆腐", "肉圓", "割包", "雞排", "鹹酥雞"] },
-        { cat: "究極飲品", icon: "🧋", style: "drink", items: ["珍珠奶茶", "楊枝甘露", "芝芝莓莓", "黑糖鮮奶", "水果茶", "翡翠檸檬", "拿鐵咖啡"] },
+        { cat: "街邊小吃", icon: "🍢", style: "st", items: ["地瓜球", "大腸包小腸", "蚵仔煎", "臭豆腐", "肉圓", "雞排", "鹹酥雞", "麻辣燙"] },
+        { cat: "究極飲品", icon: "🧋", style: "drink", items: ["珍珠奶茶", "楊枝甘露", "芝芝莓莓", "黑糖鮮奶", "水果茶", "翡翠檸檬", "拿鐵"] },
         { cat: "微醺甜點", icon: "🍰", style: "sweet", items: ["舒芙蕾", "提拉米蘇", "千層蛋糕", "肉桂捲", "焦糖布丁", "巴斯克乳酪", "紅豆餅"] },
         { cat: "連鎖快餐", icon: "🍟", style: "ff", items: ["麥當勞", "肯德基", "漢堡王", "摩斯", "必勝客", "起家雞", "丹丹漢堡"] },
-        { cat: "異國風味", icon: "🏝️", style: "sea", items: ["月亮蝦餅", "打拋豬", "檸檬魚", "酸辣蝦湯", "海南雞飯", "叻沙麵", "肉骨茶"] }
+        { cat: "異國風味", icon: "🏝️", style: "sea", items: ["月亮蝦餅", "打拋豬", "檸檬魚", "泰式奶茶", "海南雞飯", "叻沙麵", "肉骨茶"] }
     ];
 
     const all = db.flatMap(d => d.items);
@@ -147,8 +168,14 @@
     });
 
     document.getElementById('btn-all').onclick = () => startRoll(all);
+    
+    // 手動搜尋邏輯執行
+    document.getElementById('btn-exe').onclick = () => {
+        const val = document.getElementById('custom-in').value.trim();
+        if(val) startRoll([val, "Searching...", val], val);
+    };
 
-    function startRoll(arr) {
+    function startRoll(arr, forced = null) {
         if(screen.classList.contains('rolling')) return;
         screen.classList.add('rolling');
         let count = 0;
@@ -157,7 +184,7 @@
             count++;
             if(count > 20) {
                 clearInterval(timer);
-                const final = arr[Math.floor(Math.random() * arr.length)];
+                const final = forced || arr[Math.floor(Math.random() * arr.length)];
                 screen.innerText = final;
                 screen.classList.remove('rolling');
                 showModal(final);
@@ -178,6 +205,7 @@
     document.getElementById('btn-close').onclick = () => {
         document.getElementById('modal').style.display = 'none';
         screen.innerText = 'READY_TO_SCAN';
+        document.getElementById('custom-in').value = ''; // 清空輸入
     };
 </script>
 </body>
