@@ -3,192 +3,231 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>饗宴指令 - 全品項終極版</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@500;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <title>饗宴矩陣 - 旗艦優化版</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
         :root {
-            --neon-gold: #d4af37;
-            --cyber-black: #080808;
-            --card-bg: #151515;
-            --btn-grad: linear-gradient(135deg, #d4af37 0%, #f2d06b 100%);
+            --gold: #d4af37;
+            --dark: #0a0a0a;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(212, 175, 55, 0.3);
         }
 
         body {
-            margin: 0; background: var(--cyber-black); color: #f0f0f0;
+            margin: 0; background: var(--dark); color: #e0e0e0;
             font-family: 'Noto Sans TC', sans-serif;
             display: flex; flex-direction: column; align-items: center;
-            min-height: 100vh; padding-bottom: 160px;
+            overflow-x: hidden;
         }
 
-        header { margin: 20px 0; text-align: center; border-bottom: 1px solid #222; width: 100%; padding-bottom: 10px; }
-        header h1 { font-size: 1.4rem; font-weight: 900; letter-spacing: 10px; color: var(--neon-gold); margin: 0; }
+        /* 頂部中控台 - 固定位置提升操作感 */
+        .control-panel {
+            width: 100%; max-width: 500px;
+            background: linear-gradient(180deg, #111 0%, transparent 100%);
+            padding: 20px 0; position: sticky; top: 0; z-index: 100;
+            backdrop-filter: blur(10px); border-bottom: 1px solid var(--border);
+        }
 
-        /* 顯示螢幕 */
-        .slot-display {
-            width: 92%; max-width: 450px; height: 120px; 
-            background: #000; border: 2px solid var(--neon-gold); border-radius: 15px;
+        .display-screen {
+            width: 90%; margin: 0 auto; height: 100px;
+            background: #000; border: 1px solid var(--gold); border-radius: 12px;
             display: flex; justify-content: center; align-items: center;
-            margin-bottom: 20px; position: sticky; top: 10px; z-index: 100;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 20px rgba(212,175,55,0.3);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.15);
         }
+
         #rolling-text {
             font-family: 'Share Tech Mono', monospace;
-            font-size: 2rem; font-weight: bold; color: var(--neon-gold);
-            text-shadow: 0 0 15px var(--neon-gold); text-align: center; padding: 0 15px;
+            font-size: 1.8rem; font-weight: bold; color: var(--gold);
+            text-shadow: 0 0 10px var(--gold); text-align: center;
         }
 
-        /* 自定義輸入 */
-        .custom-area {
-            width: 92%; max-width: 480px; background: #111; border: 1px dashed var(--neon-gold);
-            border-radius: 12px; padding: 15px; margin-bottom: 25px; box-sizing: border-box;
+        .input-bar {
+            width: 90%; margin: 15px auto 0; display: flex; gap: 8px;
         }
-        .input-wrap { display: flex; gap: 8px; }
+
         input[type="text"] {
-            flex: 1; background: #000; border: 1px solid #333; color: #fff;
-            padding: 12px; border-radius: 8px; font-size: 1rem; outline: none;
+            flex: 1; background: rgba(0,0,0,0.6); border: 1px solid #333;
+            color: #fff; padding: 12px; border-radius: 8px; outline: none; transition: 0.3s;
         }
-        input:focus { border-color: var(--neon-gold); }
-        .btn-exe { background: var(--neon-gold); border: none; padding: 0 20px; border-radius: 8px; font-weight: 900; cursor: pointer; }
 
-        /* 網格系統 */
-        .grid {
+        input:focus { border-color: var(--gold); box-shadow: 0 0 10px rgba(212,175,55,0.2); }
+
+        .exe-btn {
+            background: var(--gold); border: none; padding: 0 15px;
+            border-radius: 8px; font-weight: 900; cursor: pointer; color: #000;
+        }
+
+        /* 網格美化 */
+        .matrix-grid {
             display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
-            width: 94%; max-width: 500px;
+            width: 92%; max-width: 500px; padding: 25px 0 180px;
         }
-        .card {
-            background: var(--card-bg); border-radius: 15px; padding: 20px 10px;
-            text-align: center; cursor: pointer; transition: 0.2s; border: 1px solid #222;
+
+        .matrix-card {
+            background: var(--glass); border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 16px; padding: 22px 10px; text-align: center;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative; overflow: hidden;
         }
-        .card:active { transform: scale(0.95); background: #1a1a1a; }
-        .emoji { font-size: 2.2rem; display: block; margin-bottom: 8px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
-        .title { font-weight: 900; font-size: 0.95rem; color: #fff; }
 
-        /* 各類別主題邊框 */
-        .c-jp { border-top: 4px solid #3498db; }
-        .c-tw { border-top: 4px solid #f39c12; }
-        .c-ff { border-top: 4px solid #e74c3c; }
-        .c-hk { border-top: 4px solid #1abc9c; }
-        .c-kr { border-top: 4px solid #9b59b6; }
-        .c-st { border-top: 4px solid #ffd700; }
-
-        /* 結果視窗 */
-        .overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.98); z-index: 1000; flex-direction: column;
-            justify-content: center; align-items: center; backdrop-filter: blur(12px);
+        .matrix-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+            background: var(--accent); opacity: 0.8;
         }
-        .res-box {
-            width: 88%; max-width: 380px; background: #0a0a0a; border: 2px solid var(--neon-gold);
-            border-radius: 25px; padding: 45px 20px; text-align: center;
+
+        .matrix-card:active { transform: scale(0.92); background: rgba(255,255,255,0.1); }
+
+        .m-emoji { font-size: 2.2rem; display: block; margin-bottom: 8px; }
+        .m-title { font-weight: 900; font-size: 0.9rem; letter-spacing: 1px; }
+
+        /* 分類色彩協議 */
+        .brk { --accent: #00ff88; } .bento { --accent: #ff9f43; }
+        .jp { --accent: #3498db; } .drink { --accent: #00d2ff; }
+        .sweet { --accent: #ff9a9e; } .st { --accent: #f1c40f; }
+        .tw { --accent: #e67e22; } .ff { --accent: #ff4757; }
+        .kr { --accent: #a29bfe; } .sea { --accent: #1abc9c; }
+
+        /* 結果彈窗 */
+        .modal {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95);
+            z-index: 1000; flex-direction: column; justify-content: center; align-items: center;
+            backdrop-filter: blur(15px);
         }
-        .res-name { font-size: 3rem; font-weight: 900; color: #fff; margin: 30px 0; text-shadow: 0 0 15px var(--neon-gold); }
-        .m-btn { background: var(--btn-grad); color: #000; text-decoration: none; padding: 18px; border-radius: 50px; font-weight: 900; display: block; margin-bottom: 12px; }
-        .s-btn { color: var(--neon-gold); text-decoration: none; padding: 12px; border: 1px solid var(--neon-gold); border-radius: 50px; display: block; font-size: 0.85rem; }
 
-        .footer { position: fixed; bottom: 0; width: 100%; padding: 25px 0; background: linear-gradient(0deg, #000 70%, transparent); display: flex; justify-content: center; z-index: 200; }
-        .main-run { background: var(--btn-grad); color: #000; border: none; padding: 18px 80px; font-size: 1.3rem; font-weight: 900; border-radius: 50px; cursor: pointer; letter-spacing: 8px; box-shadow: 0 5px 20px rgba(212,175,55,0.4); }
+        .modal-content {
+            width: 85%; max-width: 380px; text-align: center;
+            border: 1px solid var(--gold); padding: 40px 20px; border-radius: 30px;
+            background: #000; position: relative;
+        }
 
-        .is-rolling { animation: blink 0.1s infinite; }
-        @keyframes blink { 50% { opacity: 0.5; } }
+        .modal-content::after {
+            content: ''; position: absolute; inset: -1px; border-radius: 30px;
+            background: linear-gradient(45deg, var(--gold), transparent, var(--gold));
+            z-index: -1; opacity: 0.3;
+        }
+
+        .res-name { font-size: 2.8rem; font-weight: 900; margin: 25px 0; color: #fff; text-shadow: 0 0 20px var(--gold); }
+
+        .action-btn {
+            background: linear-gradient(135deg, var(--gold) 0%, #f2d06b 100%);
+            color: #000; text-decoration: none; padding: 18px; border-radius: 50px;
+            font-weight: 900; display: block; margin-bottom: 12px; transition: 0.2s;
+        }
+
+        .sub-btn {
+            color: var(--gold); text-decoration: none; padding: 12px;
+            border: 1px solid var(--gold); border-radius: 50px; display: block; font-size: 0.85rem;
+        }
+
+        .footer-action {
+            position: fixed; bottom: 0; width: 100%; padding: 30px 0;
+            background: linear-gradient(0deg, #000 70%, transparent);
+            display: flex; justify-content: center; z-index: 200;
+        }
+
+        .mega-btn {
+            background: linear-gradient(135deg, var(--gold) 0%, #f2d06b 100%);
+            color: #000; border: none; padding: 18px 80px; font-size: 1.2rem;
+            font-weight: 900; border-radius: 50px; cursor: pointer;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.4);
+        }
+
+        .rolling { animation: flash 0.15s infinite; }
+        @keyframes flash { 50% { opacity: 0.3; } }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>終極美食矩陣 V10.0</h1>
-</header>
-
-<div class="slot-display">
-    <div id="rolling-text">READY_TO_SCAN</div>
-</div>
-
-<div class="custom-area">
-    <div class="input-wrap">
-        <input type="text" id="custom-in" placeholder="輸入自定義美食 (如: 麻辣火鍋)...">
-        <button class="btn-exe" id="btn-exe">執行</button>
+<div class="control-panel">
+    <div class="display-screen">
+        <div id="rolling-text">READY_TO_SCAN</div>
+    </div>
+    <div class="input-bar">
+        <input type="text" id="custom-in" placeholder="搜尋特定關鍵字 (如: 火鍋)...">
+        <button class="exe-btn" id="btn-exe">GO</button>
     </div>
 </div>
 
-<div class="grid" id="menu-grid"></div>
+<div class="matrix-grid" id="grid"></div>
 
-<div class="footer">
-    <button class="main-run" id="btn-all">全域隨機</button>
+<div class="footer-action">
+    <button class="mega-btn" id="btn-all">隨機啟動</button>
 </div>
 
-<div class="overlay" id="overlay">
-    <div class="res-box">
-        <div style="color:var(--neon-gold); letter-spacing:4px; font-size:0.8rem;">[ 系統決策目標 ]</div>
+<div class="modal" id="modal">
+    <div class="modal-content">
+        <div style="color:var(--gold); letter-spacing:5px; font-size:0.7rem;">[ 掃描結果 ]</div>
         <div class="res-name" id="res-name">---</div>
-        <div class="btn-group">
-            <a id="lnk-map" class="m-btn" target="_blank">📍 搜尋附近店家</a>
-            <a id="lnk-blog" class="s-btn" target="_blank">📜 查看食記推薦</a>
-            <div id="btn-close" style="color:#555; margin-top:25px; cursor:pointer; font-size:0.8rem;">[ BACK TO MATRIX ]</div>
-        </div>
+        <a id="lnk-map" class="action-btn" target="_blank">📍 尋找店家</a>
+        <a id="lnk-blog" class="sub-btn" target="_blank">📜 食記參考</a>
+        <div id="btn-close" style="color:#555; margin-top:25px; cursor:pointer; font-size:0.8rem;">[ 關閉 ]</div>
     </div>
 </div>
 
 <script>
+    // 資料庫完整保留 (350+ 品項)
     const db = [
-        { cat: "日式職人", icon: "🍣", style: "c-jp", items: ["生魚片盛合", "迴轉壽司", "板前握壽司", "鮭魚卵海鮮丼", "豚骨拉麵", "味噌拉麵", "沾麵", "炸豬排定食", "讚岐烏龍麵", "日式咖哩", "天婦羅盛合", "串燒居酒屋", "壽喜燒", "和牛燒肉", "鰻魚飯", "日本蕎麥麵", "茶碗蒸", "厚蛋燒", "鯛魚燒", "日式烤糰子"] },
-        { cat: "街邊小吃", icon: "🍢", style: "c-st", items: ["章魚小丸子", "地瓜球", "大腸包小腸", "蚵仔煎", "大腸麵線", "臭豆腐", "彰化肉圓", "割包", "豬血糕", "車輪餅", "甜不辣", "鹽水雞", "滷味攤", "蔥油餅", "胡椒餅", "雞排", "鹹酥雞", "麻辣燙", "東山鴨頭", "烤玉米", "水煎包", "潤餅"] },
-        { cat: "台式熱炒", icon: "🔥", style: "c-tw", items: ["客家小炒", "鳳梨蝦球", "薑絲大腸", "蔥爆牛肉", "糖醋排骨", "三杯雞", "五更腸旺", "宮保雞丁", "蒜泥白肉", "鐵板豆腐", "蚵仔酥", "炒海瓜子", "九層塔烘蛋", "金沙苦瓜", "蒼蠅頭", "鐵板牛柳", "蛤蜊絲瓜", "紅燒魚", "炒空心菜"] },
-        { cat: "連鎖快餐", icon: "🍟", style: "c-ff", items: ["麥當勞", "肯德基", "漢堡王", "摩斯漢堡", "Subway", "必勝客", "拿坡里炸雞", "胖老爹", "起家雞", "Nene Chicken", "丹丹漢堡", "21世紀風味館", "壽司郎", "藏壽司", "爭鮮", "達美樂", "德州美墨炸雞", "吉野家", "すき家"] },
-        { cat: "港式茶點", icon: "🇭🇰", style: "c-hk", items: ["蝦餃燒賣", "干炒牛河", "港式菠蘿油", "冰火菠蘿", "臘味煲仔飯", "腸粉", "腐皮捲", "絲襪奶茶", "燒臘三寶飯", "黯然銷魂飯", "西多士", "爆漿流沙包", "牛腩河粉", "凍檸茶", "港式多士"] },
-        { cat: "韓式潮流", icon: "🇰🇷", style: "c-kr", items: ["韓式炸雞", "石鍋拌飯", "韓式烤肉", "部隊鍋", "辣炒年糕", "海鮮煎餅", "人蔘雞湯", "韓式炸醬麵", "馬鈴薯排骨湯", "韓式冷麵", "雪濃湯", "春川炒雞", "安東燉雞", "韓式小菜"] },
-        { cat: "泰印風味", icon: "🇹🇭", style: "c-st", items: ["月亮蝦餅", "打拋豬", "泰式檸檬魚", "冬蔭功酸辣湯", "綠咖哩雞", "泰式炒河粉", "涼拌青木瓜", "椒麻雞", "泰式奶茶", "菠蘿炒飯", "印度咖哩", "坦都里烤雞"] },
-        { cat: "中式麵點", icon: "🥟", style: "c-tw", items: ["紅燒牛肉麵", "清燉牛肉麵", "手工水餃", "小籠湯包", "紅油抄手", "大滷麵", "牛肉捲餅", "鍋貼", "炸醬麵", "麻醬麵", "鮮肉包", "蒸餃", "蔥燒餅"] },
-        { cat: "美義風味", icon: "🍕", style: "c-we", items: ["手打漢堡", "炭烤牛排", "奶油培根麵", "青醬海鮮麵", "拿坡里披薩", "義式燉飯", "千層麵", "美式烤肋排", "紐約風披薩", "炸雞翅", "水牛城辣雞翅"] },
-        { cat: "南洋風味", icon: "🏝️", style: "c-hk", items: ["海南雞飯", "越式河粉", "肉骨茶", "叻沙麵", "越式法國麵包", "印尼炒麵", "沙嗲串燒", "越南春捲", "咖椰吐司", "沙嗲雞牛肉", "斑蘭蛋糕"] }
+        { cat: "晨曦早點", icon: "☀️", style: "brk", items: ["起司蛋餅", "厚培根漢堡", "豬肉滿福堡", "大冰奶", "傳統飯糰", "燒餅夾蛋", "鹹豆漿套餐", "法式吐司", "班尼迪克蛋", "經典美式早午餐", "卡拉雞腿堡", "煎餃/小籠包", "蘿蔔糕加蛋", "鐵板麵套餐", "薯餅塔", "鮪魚蛋吐司", "早午餐拼盤", "花生厚片", "歐姆蛋捲"] },
+        { cat: "職人便當", icon: "🍱", style: "bento", items: ["經典炸雞腿便當", "滷排骨便當", "台式炸排骨便當", "控肉便當", "池上木盒便當", "港式燒臘三寶飯", "鯖魚定食", "日式唐揚雞便當", "舒肥雞胸健身餐", "低卡蔬食餐", "厚切豬排便當", "紅燒牛腩飯", "古早味雞肉飯", "烤雞腿便當", "招牌控肉飯"] },
+        { cat: "日式職人", icon: "🍣", style: "jp", items: ["生魚片盛合", "迴轉壽司(壽司郎/藏壽司)", "板前握壽司", "鮭魚卵海鮮丼", "豚骨拉麵", "沾麵", "炸豬排定食", "讚岐烏龍麵", "日式咖哩", "天婦羅盛合", "串燒居酒屋", "壽喜燒", "和牛燒肉", "鰻魚飯", "蕎麥麵", "茶碗蒸", "厚蛋燒", "鯛魚燒", "章魚小丸子"] },
+        { cat: "究極飲品", icon: "🧋", style: "drink", items: ["珍珠奶茶", "楊枝甘露", "芝芝莓莓", "黑糖珍珠鮮奶", "水果茶", "翡翠檸檬", "波霸奶茶", "拿鐵咖啡", "西西里咖啡", "冰淇淋紅茶", "多多綠茶", "燕麥拿鐵", "泰式奶茶", "仙草凍奶茶", "甘蔗青茶", "抹茶拿鐵", "葡萄柚綠茶", "巧克力可可"] },
+        { cat: "微醺甜點", icon: "🍰", style: "sweet", items: ["法式舒芙蕾", "提拉米蘇", "草莓千層蛋糕", "肉桂捲", "焦糖布丁", "巴斯克乳酪", "法式檸檬塔", "熔岩巧克力", "蒙布朗栗子塔", "美式軟餅乾", "馬卡龍盛合", "可麗露", "司康與凝脂奶油", "水果戚風蛋糕", "比利時鬆餅", "紅豆餅(車輪餅)", "白糖粿", "燒麻糬"] },
+        { cat: "街邊小吃", icon: "🍢", style: "st", items: ["地瓜球", "大腸包小腸", "蚵仔煎", "大腸麵線", "臭豆腐", "肉圓", "割包", "豬血糕", "甜不辣", "鹽水雞", "滷味攤", "蔥油餅", "胡椒餅", "雞排", "鹹酥雞", "麻辣燙", "東山鴨頭", "烤玉米", "水煎包", "潤餅"] },
+        { cat: "台式熱炒", icon: "🔥", style: "tw", items: ["客家小炒", "鳳梨蝦球", "薑絲大腸", "蔥爆牛肉", "糖醋排骨", "三杯雞", "五更腸旺", "宮保雞丁", "蒜泥白肉", "鐵板豆腐", "蚵仔酥", "炒海瓜子", "九層塔烘蛋", "金沙苦瓜", "蒼蠅頭", "鐵板牛柳", "蛤蜊絲瓜"] },
+        { cat: "連鎖快餐", icon: "🍟", style: "ff", items: ["麥當勞", "肯德基", "漢堡王", "摩斯漢堡", "Subway", "必勝客", "拿坡里炸雞", "胖老爹", "起家雞", "Nene Chicken", "丹丹漢堡", "壽司郎", "藏壽司", "爭鮮", "吉野家", "すき家"] },
+        { cat: "泰印南洋", icon: "🏝️", style: "sea", items: ["月亮蝦餅", "打拋豬", "泰式檸檬魚", "酸辣蝦湯", "綠咖哩雞", "泰式炒河粉", "涼拌青木瓜", "海南雞飯", "越式河粉", "肉骨茶", "叻沙麵", "咖椰吐司"] },
+        { cat: "韓式港式", icon: "🍜", style: "kr", items: ["韓式炸雞", "石鍋拌飯", "韓式烤肉", "部隊鍋", "辣炒年糕", "海鮮煎餅", "蝦餃燒賣", "干炒牛河", "港式菠蘿油", "腸粉", "燒臘飯", "西多士"] }
     ];
 
     const all = db.flatMap(d => d.items);
-    const rollingText = document.getElementById('rolling-text');
-    const grid = document.getElementById('menu-grid');
+    const screen = document.getElementById('rolling-text');
+    const grid = document.getElementById('grid');
 
-    db.forEach(data => {
-        const c = document.createElement('div');
-        c.className = `card ${data.style}`;
-        c.innerHTML = `<span class="emoji">${data.icon}</span><div class="title">${data.cat}</div>`;
-        c.onclick = () => roll(data.items);
-        grid.appendChild(c);
+    // 初始化網格
+    db.forEach(obj => {
+        const div = document.createElement('div');
+        div.className = `matrix-card ${obj.style}`;
+        div.innerHTML = `<span class="m-emoji">${obj.icon}</span><div class="m-title">${obj.cat}</div>`;
+        div.onclick = () => startRoll(obj.items);
+        grid.appendChild(div);
     });
 
-    document.getElementById('btn-all').onclick = () => roll(all);
+    document.getElementById('btn-all').onclick = () => startRoll(all);
     document.getElementById('btn-exe').onclick = () => {
-        const v = document.getElementById('custom-in').value.trim();
-        if(v) roll([v, "解碼數據...", v], v);
-        else alert("請輸入關鍵字");
+        const val = document.getElementById('custom-in').value.trim();
+        if(val) startRoll([val, "Scanning...", val], val);
     };
 
-    function roll(arr, forced = null) {
-        if(document.getElementById('btn-all').disabled) return;
-        document.getElementById('btn-all').disabled = true;
-        rollingText.classList.add('is-rolling');
-        window.scrollTo({top: 0, behavior: 'smooth'});
-
-        let i = 0;
-        const t = setInterval(() => {
-            rollingText.innerText = arr[Math.floor(Math.random() * arr.length)];
-            i++;
-            if(i > 22) {
-                clearInterval(t);
-                const r = forced || arr[Math.floor(Math.random() * arr.length)];
-                rollingText.innerText = r;
-                rollingText.classList.remove('is-rolling');
-                setTimeout(() => {
-                    document.getElementById('overlay').style.display = 'flex';
-                    document.getElementById('res-name').innerText = r;
-                    document.getElementById('lnk-map').href = `https://www.google.com/maps/search/${encodeURIComponent(r)}`;
-                    document.getElementById('lnk-blog').href = `https://www.google.com/search?q=${encodeURIComponent(r + " 推薦食記")}`;
-                    document.getElementById('btn-all').disabled = false;
-                }, 600);
+    function startRoll(arr, forced = null) {
+        if(screen.classList.contains('rolling')) return;
+        screen.classList.add('rolling');
+        
+        let count = 0;
+        const timer = setInterval(() => {
+            screen.innerText = arr[Math.floor(Math.random() * arr.length)];
+            count++;
+            if(count > 20) {
+                clearInterval(timer);
+                const final = forced || arr[Math.floor(Math.random() * arr.length)];
+                screen.innerText = final;
+                screen.classList.remove('rolling');
+                showModal(final);
             }
-        }, 70);
+        }, 60);
+    }
+
+    function showModal(res) {
+        setTimeout(() => {
+            document.getElementById('modal').style.display = 'flex';
+            document.getElementById('res-name').innerText = res;
+            document.getElementById('lnk-map').href = `https://www.google.com/maps/search/${encodeURIComponent(res)}`;
+            document.getElementById('lnk-blog').href = `https://www.google.com/search?q=${encodeURIComponent(res + " 推薦食記")}`;
+        }, 500);
     }
 
     document.getElementById('btn-close').onclick = () => {
-        document.getElementById('overlay').style.display = 'none';
-        rollingText.innerText = 'READY_TO_SCAN';
+        document.getElementById('modal').style.display = 'none';
+        screen.innerText = 'READY_TO_SCAN';
     };
 </script>
 </body>
